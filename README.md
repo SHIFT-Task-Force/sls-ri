@@ -46,10 +46,12 @@ This is a Web Service that has the following 2 APIs:
     - for Each ValueSet resource
         - Processes and stores these ValueSet resources to build an internal rule set for identifying sensitive information in FHIR resources.
         - Each ValueSet the expansion will hold codes from standard terminologies (e.g., SNOMED CT, LOINC, ICD-10) that correspond to sensitive topics.
+          - If no expansion is present. The tx.fhir.org public terminology server is called to expand the ValueSet and retrieve the codes. This uses the ValueSet/$expand operation, passing in the ValueSet to the valueSet parameter.
+        - Extracting the sensitive codes
         - The Sensitive topic code is indicated in either:
             - `ValueSet.topic[0].coding[0]` element, OR
             - `ValueSet.useContext` with `code.code = 'focus'` and the topic in `valueCodeableConcept.coding[0]`
-    - Recording the earliest dateTime from the ValueSet.date element to determine the effective date for the sensitive categories.
+    - Recording the earliest dateTime from the ValueSet.expansion.timestamp or ValueSet.date element to determine the effective date for the sensitive categories.
     - Returning an OperationOutcome indicating success or failure of the ValueSet processing.
 2. Tag a Bundle of Clinical Resources
     - Receives a FHIR Bundle holding one or more FHIR resources (e.g., Condition, Observation, MedicationStatement) to be analyzed for sensitive information.

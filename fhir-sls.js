@@ -50,9 +50,9 @@ class FHIRSecurityLabelingService {
      * Loads ValueSets and builds internal rule set for sensitive topic detection
      * 
      * @param {Object} input - FHIR Bundle or single ValueSet resource
-     * @returns {Object} - FHIR OperationOutcome
+     * @returns {Promise<Object>} - FHIR OperationOutcome
      */
-    processValueSetBundle(input) {
+    async processValueSetBundle(input) {
         try {
             let valueSets = [];
             let errors = [];
@@ -60,14 +60,26 @@ class FHIRSecurityLabelingService {
 
             // Handle single ValueSet
             if (input && input.resourceType === 'ValueSet') {
+                // Expand if needed
+                if (!input.expansion || !input.expansion.contains) {
+                    const expanded = await this.expandValueSet(input);
+                    if (expanded) {
+                        input = expanded;
+                    } else {
+                        return this.createOperationOutcome('error', `Failed to expand ValueSet ${input.id || 'unknown'}`);
+                    }
+                }
+
                 const validation = this.validateValueSet(input);
                 if (validation.errors.length > 0) {
                     return this.createOperationOutcome('error', 'Invalid ValueSet', validation.errors);
                 }
                 
                 valueSets.push(input);
-                if (input.date) {
-                    earliestDate = new Date(input.date);
+                // Prefer expansion.timestamp over date
+                const vsDate = this.getValueSetDate(input);
+                if (vsDate) {
+                    earliestDate = vsDate;
                 }
             }
             // Handle Bundle
@@ -78,12 +90,23 @@ class FHIRSecurityLabelingService {
 
                 // Process each entry in the bundle
                 for (const entry of input.entry) {
-                    const resource = entry.resource;
+                    let resource = entry.resource;
                     
                     // Validate resource type
                     if (!resource || resource.resourceType !== 'ValueSet') {
                         errors.push(`Skipping non-ValueSet resource: ${resource?.resourceType || 'unknown'}`);
                         continue;
+                    }
+
+                    // Expand if needed
+                    if (!resource.expansion || !resource.expansion.contains) {
+                        const expanded = await this.expandValueSet(resource);
+                        if (expanded) {
+                            resource = expanded;
+                        } else {
+                            errors.push(`Failed to expand ValueSet ${resource.id || 'unknown'}`);
+                            continue;
+                        }
                     }
 
                     const validation = this.validateValueSet(resource);
@@ -92,11 +115,11 @@ class FHIRSecurityLabelingService {
                         continue;
                     }
 
-                    // Track earliest date
-                    if (resource.date) {
-                        const resourceDate = new Date(resource.date);
-                        if (!earliestDate || resourceDate < earliestDate) {
-                            earliestDate = resourceDate;
+                    // Prefer expansion.timestamp over date
+                    const vsDate = this.getValueSetDate(resource);
+                    if (vsDate) {
+                        if (!earliestDate || vsDate < earliestDate) {
+                            earliestDate = vsDate;
                         }
                     }
 
@@ -131,6 +154,92 @@ class FHIRSecurityLabelingService {
         } catch (error) {
             return this.createOperationOutcome('error', `Processing failed: ${error.message}`);
         }
+    }
+
+    /**
+     * Expand a ValueSet using tx.fhir.org if no expansion present
+     */
+    async expandValueSet(valueSet) {
+        try {
+            console.log(`Expanding ValueSet ${valueSet.id || 'unknown'} using tx.fhir.org...`);
+            
+            const url = 'https://tx.fhir.org/r4/ValueSet/$expand';
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/fhir+json',
+                    'Accept': 'application/fhir+json'
+                },
+                body: JSON.stringify({
+                    resourceType: 'Parameters',
+                    parameter: [
+                        {
+                            name: 'valueSet',
+                            resource: valueSet
+                        }
+                    ]
+                })
+            });
+
+            if (!response.ok) {
+                console.error(`Expansion failed with status ${response.status}`);
+                return null;
+            }
+
+            const result = await response.json();
+            
+            // Extract expanded ValueSet from Parameters response
+            let expandedValueSet = null;
+            if (result.resourceType === 'ValueSet' && result.expansion) {
+                expandedValueSet = result;
+            } else if (result.resourceType === 'Parameters' && result.parameter) {
+                const valueSetParam = result.parameter.find(p => p.name === 'return' && p.resource);
+                if (valueSetParam && valueSetParam.resource.expansion) {
+                    expandedValueSet = valueSetParam.resource;
+                }
+            }
+
+            if (!expandedValueSet) {
+                console.error('Unexpected expansion response format');
+                return null;
+            }
+
+            // Preserve essential fields from original ValueSet
+            // tx.fhir.org may not return all original fields
+            if (!expandedValueSet.id && valueSet.id) {
+                expandedValueSet.id = valueSet.id;
+            }
+            if (!expandedValueSet.date && valueSet.date) {
+                expandedValueSet.date = valueSet.date;
+            }
+            if (!expandedValueSet.topic && valueSet.topic) {
+                expandedValueSet.topic = valueSet.topic;
+            }
+            if (!expandedValueSet.useContext && valueSet.useContext) {
+                expandedValueSet.useContext = valueSet.useContext;
+            }
+
+            return expandedValueSet;
+
+        } catch (error) {
+            console.error(`Error expanding ValueSet: ${error.message}`);
+            return null;
+        }
+    }
+
+    /**
+     * Get the effective date of a ValueSet, preferring expansion.timestamp over date
+     */
+    getValueSetDate(valueSet) {
+        // Prefer expansion.timestamp if available
+        if (valueSet.expansion && valueSet.expansion.timestamp) {
+            return new Date(valueSet.expansion.timestamp);
+        }
+        // Fall back to date
+        if (valueSet.date) {
+            return new Date(valueSet.date);
+        }
+        return null;
     }
 
     /**

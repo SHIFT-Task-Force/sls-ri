@@ -46,7 +46,7 @@ app.get('/health', (req, res) => {
 });
 
 // API 1: Process ValueSet Bundle
-app.post('/api/v1/valuesets', (req, res) => {
+app.post('/api/v1/valuesets', async (req, res) => {
     try {
         const bundle = req.body;
         
@@ -56,7 +56,7 @@ app.post('/api/v1/valuesets', (req, res) => {
             });
         }
 
-        const outcome = slsService.processValueSetBundle(bundle);
+        const outcome = await slsService.processValueSetBundle(bundle);
         
         // Check if operation was successful
         const isError = outcome.issue[0].severity === 'error';

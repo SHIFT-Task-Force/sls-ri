@@ -28,7 +28,7 @@ function showTab(tabName) {
 }
 
 // API 1: Process ValueSets
-function processValueSets() {
+async function processValueSets() {
     const input = document.getElementById('valuesetInput').value.trim();
     const output = document.getElementById('valuesetOutput');
     
@@ -40,7 +40,7 @@ function processValueSets() {
     
     try {
         const bundle = JSON.parse(input);
-        const outcome = slsService.processValueSetBundle(bundle);
+        const outcome = await slsService.processValueSetBundle(bundle);
         
         output.textContent = JSON.stringify(outcome, null, 2);
         output.className = outcome.issue[0].severity === 'error' ? 'output error' : 'output success';

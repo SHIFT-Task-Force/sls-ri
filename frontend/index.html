@@ -24,11 +24,11 @@
         <!-- API 1: Setup Sensitive Topics -->
         <div id="setup" class="tab-content active">
             <h2>API 1: Setup Sensitive Topics</h2>
-            <p>Upload a FHIR Bundle containing ValueSet resources that define sensitive categories.</p>
+            <p>Upload a FHIR Bundle containing ValueSet resources, or a single ValueSet, that define sensitive categories.</p>
             
             <div class="form-section">
-                <label for="valuesetInput">FHIR Bundle (JSON):</label>
-                <textarea id="valuesetInput" placeholder='Paste FHIR Bundle JSON with ValueSet resources...' rows="15"></textarea>
+                <label for="valuesetInput">FHIR Bundle or ValueSet (JSON):</label>
+                <textarea id="valuesetInput" placeholder='Paste FHIR Bundle with ValueSets, or a single ValueSet resource...' rows="15"></textarea>
                 
                 <div class="button-group">
                     <button onclick="loadSampleValueSet()">Load Sample ValueSet Bundle</button>
