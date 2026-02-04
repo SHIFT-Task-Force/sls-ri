@@ -452,7 +452,7 @@ This project showcases the capabilities of **GitHub Copilot (Claude Sonnet 4.5)*
 - ✨ Frontend UI with sample data
 - ✨ Comprehensive documentation
 
-...was generated through AI-assisted development using GitHub Copilot powered by Anthropic's Claude Sonnet 4.5 model. This demonstrates how advanced AI models can accelerate the development of complex healthcare interoperability solutions while maintaining code quality and adherence to industry standards (FHIR R4, US Core).
+...was generated through AI-assisted development using GitHub Copilot powered by Anthropic's Claude Sonnet 4.5 model. This demonstrates how advanced AI models can accelerate the development of complex healthcare interoperability solutions while maintaining code quality and adherence to industry standards (FHIR R4, US Core). Directed by John Moehrke of <a href="https://MoehrkeResearch.com">Moehrke Research LLC</a>.
 
 ### Development Environment
 - **IDE**: Visual Studio Code
