@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHIR Security Labeling Service</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>FHIR Security Labeling Service (SLS)</h1>
+            <p class="subtitle">Reference Implementation - Client-Side Processing</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('setup')">API 1: Setup Sensitive Topics</button>
+            <button class="tab-button" onclick="showTab('analyze')">API 2: Tag Clinical Resources</button>
+            <button class="tab-button" onclick="showTab('status')">Status</button>
+        </div>
+
+        <!-- API 1: Setup Sensitive Topics -->
+        <div id="setup" class="tab-content active">
+            <h2>API 1: Setup Sensitive Topics</h2>
+            <p>Upload a FHIR Bundle containing ValueSet resources that define sensitive categories.</p>
+            
+            <div class="form-section">
+                <label for="valuesetInput">FHIR Bundle (JSON):</label>
+                <textarea id="valuesetInput" placeholder='Paste FHIR Bundle JSON with ValueSet resources...' rows="15"></textarea>
+                
+                <div class="button-group">
+                    <button onclick="loadSampleValueSet()">Load Sample ValueSet Bundle</button>
+                    <button onclick="processValueSets()" class="primary">Process ValueSets</button>
+                    <button onclick="clearValueSets()" class="secondary">Clear All ValueSets</button>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <h3>OperationOutcome:</h3>
+                <pre id="valuesetOutput" class="output"></pre>
+            </div>
+        </div>
+
+        <!-- API 2: Tag Clinical Resources -->
+        <div id="analyze" class="tab-content">
+            <h2>API 2: Tag Clinical Resources</h2>
+            <p>Upload a FHIR Bundle containing clinical resources to analyze for sensitive information.</p>
+            
+            <div class="form-section">
+                <label for="resourceInput">FHIR Bundle (JSON):</label>
+                <textarea id="resourceInput" placeholder='Paste FHIR Bundle JSON with clinical resources...' rows="15"></textarea>
+                
+                <div class="button-group">
+                    <button onclick="loadSampleResources()">Load Sample Resource Bundle</button>
+                    <button onclick="analyzeResources()" class="primary">Analyze & Tag Resources</button>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <h3>Batch Bundle (with update actions):</h3>
+                <pre id="resourceOutput" class="output"></pre>
+            </div>
+        </div>
+
+        <!-- Status Tab -->
+        <div id="status" class="tab-content">
+            <h2>System Status</h2>
+            
+            <div class="status-section">
+                <h3>Loaded ValueSets:</h3>
+                <div id="valuesetStatus" class="status-box"></div>
+            </div>
+
+            <div class="status-section">
+                <h3>Sensitive Topic Rules:</h3>
+                <div id="rulesStatus" class="status-box"></div>
+            </div>
+
+            <div class="status-section">
+                <h3>Processing Statistics:</h3>
+                <div id="statsStatus" class="status-box"></div>
+            </div>
+
+            <div class="button-group">
+                <button onclick="refreshStatus()">Refresh Status</button>
+                <button onclick="exportData()" class="secondary">Export Data</button>
+                <button onclick="importData()" class="secondary">Import Data</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>Reference Implementation - Code optimized for readability, not performance</p>
+            <p>Supports FHIR US Core resources (USCDI v4)</p>
+        </footer>
+    </div>
+
+    <script src="fhir-sls.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

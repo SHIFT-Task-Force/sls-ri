@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  sls-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fhir-sls-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_PATH=/app/data/sls.db
+    volumes:
+      # Persist database
+      - sls-data:/app/data
+      # Mount frontend files
+      - ./frontend:/app/frontend:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - sls-network
+
+volumes:
+  sls-data:
+    driver: local
+
+networks:
+  sls-network:
+    driver: bridge

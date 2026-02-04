@@ -1,0 +1,579 @@
+/**
+ * FHIR Security Labeling Service - Backend Core Logic
+ * Adapted from client-side implementation for server use
+ */
+
+const Database = require('better-sqlite3');
+const path = require('path');
+
+class FHIRSecurityLabelingService {
+    constructor(dbPath = ':memory:') {
+        // Initialize database
+        this.db = new Database(dbPath);
+        this.initializeDatabase();
+        
+        // Supported US Core clinical resources
+        this.SUPPORTED_RESOURCES = [
+            'AllergyIntolerance', 'Condition', 'Procedure', 'Immunization',
+            'MedicationRequest', 'Medication', 'CarePlan', 'CareTeam', 'Goal',
+            'Observation', 'DiagnosticReport', 'DocumentReference',
+            'QuestionnaireResponse', 'Specimen', 'Encounter', 'ServiceRequest'
+        ];
+        
+        this.LAST_SOURCE_SYNC_URL = 'http://hl7.org/fhir/StructureDefinition/lastSourceSync';
+    }
+
+    /**
+     * Initialize database schema
+     */
+    initializeDatabase() {
+        this.db.exec(`
+            CREATE TABLE IF NOT EXISTS valuesets (
+                id TEXT PRIMARY KEY,
+                resource TEXT NOT NULL,
+                date TEXT,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS rules (
+                code_key TEXT PRIMARY KEY,
+                topic_code TEXT NOT NULL,
+                topic_system TEXT NOT NULL,
+                topic_display TEXT,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS metadata (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL,
+                updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS stats (
+                key TEXT PRIMARY KEY,
+                value INTEGER DEFAULT 0,
+                updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+
+        // Initialize stats
+        const statsInit = this.db.prepare('INSERT OR IGNORE INTO stats (key, value) VALUES (?, ?)');
+        statsInit.run('totalValueSetsProcessed', 0);
+        statsInit.run('totalResourcesAnalyzed', 0);
+        statsInit.run('totalResourcesLabeled', 0);
+        statsInit.run('totalResourcesSkipped', 0);
+    }
+
+    /**
+     * API 1: Process ValueSet Bundle
+     */
+    processValueSetBundle(bundle) {
+        try {
+            if (!bundle || bundle.resourceType !== 'Bundle') {
+                return this.createOperationOutcome('error', 'Invalid Bundle: resourceType must be "Bundle"');
+            }
+
+            if (!bundle.entry || bundle.entry.length === 0) {
+                return this.createOperationOutcome('warning', 'Bundle contains no entries');
+            }
+
+            const valueSets = [];
+            const errors = [];
+            let earliestDate = null;
+
+            for (const entry of bundle.entry) {
+                const resource = entry.resource;
+                
+                if (!resource || resource.resourceType !== 'ValueSet') {
+                    errors.push(`Skipping non-ValueSet resource: ${resource?.resourceType || 'unknown'}`);
+                    continue;
+                }
+
+                if (!resource.id) {
+                    errors.push('ValueSet missing required field: id');
+                    continue;
+                }
+
+                if (!resource.topic || resource.topic.length === 0) {
+                    errors.push(`ValueSet ${resource.id} missing required field: topic`);
+                    continue;
+                }
+
+                if (!resource.expansion || !resource.expansion.contains) {
+                    errors.push(`ValueSet ${resource.id} missing expansion.contains`);
+                    continue;
+                }
+
+                const topicCoding = resource.topic[0].coding ? resource.topic[0].coding[0] : null;
+                if (!topicCoding || !topicCoding.code) {
+                    errors.push(`ValueSet ${resource.id} topic missing coding.code`);
+                    continue;
+                }
+
+                if (resource.date) {
+                    const resourceDate = new Date(resource.date);
+                    if (!earliestDate || resourceDate < earliestDate) {
+                        earliestDate = resourceDate;
+                    }
+                }
+
+                valueSets.push(resource);
+            }
+
+            if (valueSets.length === 0) {
+                return this.createOperationOutcome('error', 'No valid ValueSets found in bundle', errors);
+            }
+
+            // Store ValueSets and build rules
+            this.storeValueSets(valueSets, earliestDate);
+            this.buildRules(valueSets);
+
+            // Update statistics
+            this.incrementStat('totalValueSetsProcessed', valueSets.length);
+
+            return this.createOperationOutcome(
+                'success',
+                `Successfully processed ${valueSets.length} ValueSet(s)`,
+                errors.length > 0 ? errors : null
+            );
+
+        } catch (error) {
+            console.error('Error processing ValueSet bundle:', error);
+            return this.createOperationOutcome('error', `Processing failed: ${error.message}`);
+        }
+    }
+
+    /**
+     * Store ValueSets in database
+     */
+    storeValueSets(valueSets, earliestDate) {
+        const insertStmt = this.db.prepare(
+            'INSERT OR REPLACE INTO valuesets (id, resource, date) VALUES (?, ?, ?)'
+        );
+
+        for (const vs of valueSets) {
+            insertStmt.run(vs.id, JSON.stringify(vs), vs.date || null);
+        }
+
+        // Update earliest date if needed
+        if (earliestDate) {
+            const currentEarliest = this.getMetadata('earliestDate');
+            if (!currentEarliest || earliestDate < new Date(currentEarliest)) {
+                this.setMetadata('earliestDate', earliestDate.toISOString());
+            }
+        }
+    }
+
+    /**
+     * Build internal rule set from ValueSets
+     */
+    buildRules(valueSets) {
+        const insertStmt = this.db.prepare(
+            'INSERT OR REPLACE INTO rules (code_key, topic_code, topic_system, topic_display) VALUES (?, ?, ?, ?)'
+        );
+
+        for (const vs of valueSets) {
+            const topicCoding = vs.topic[0].coding[0];
+            const topicCode = topicCoding.code;
+            const topicSystem = topicCoding.system;
+            const topicDisplay = topicCoding.display || topicCode;
+
+            if (vs.expansion && vs.expansion.contains) {
+                this.extractCodesFromExpansion(
+                    vs.expansion.contains,
+                    insertStmt,
+                    { code: topicCode, system: topicSystem, display: topicDisplay }
+                );
+            }
+        }
+    }
+
+    /**
+     * Recursively extract codes from ValueSet expansion
+     */
+    extractCodesFromExpansion(contains, insertStmt, topic) {
+        for (const item of contains) {
+            if (item.code && item.system) {
+                const key = `${item.system}|${item.code}`;
+                insertStmt.run(key, topic.code, topic.system, topic.display);
+            }
+
+            if (item.contains) {
+                this.extractCodesFromExpansion(item.contains, insertStmt, topic);
+            }
+        }
+    }
+
+    /**
+     * API 2: Analyze and Tag Resources
+     */
+    analyzeResourceBundle(bundle) {
+        try {
+            if (!bundle || bundle.resourceType !== 'Bundle') {
+                throw new Error('Invalid Bundle: resourceType must be "Bundle"');
+            }
+
+            if (!bundle.entry || bundle.entry.length === 0) {
+                throw new Error('Bundle contains no entries');
+            }
+
+            // Check if rules have been loaded
+            const rulesCount = this.db.prepare('SELECT COUNT(*) as count FROM rules').get();
+            if (rulesCount.count === 0) {
+                throw new Error('No sensitive topic rules loaded. Please process ValueSets first (API 1).');
+            }
+
+            const rules = this.getAllRules();
+            const earliestDate = this.getMetadata('earliestDate');
+            const batchEntries = [];
+            let analyzed = 0;
+            let labeled = 0;
+            let skipped = 0;
+
+            for (const entry of bundle.entry) {
+                const resource = entry.resource;
+                
+                if (!resource || !this.SUPPORTED_RESOURCES.includes(resource.resourceType)) {
+                    continue;
+                }
+
+                if (this.shouldSkipResource(resource, earliestDate)) {
+                    skipped++;
+                    continue;
+                }
+
+                analyzed++;
+
+                const matchedTopics = this.analyzeResource(resource, rules);
+
+                if (matchedTopics.length > 0) {
+                    this.applySecurityLabels(resource, matchedTopics);
+                    labeled++;
+                }
+
+                this.addLastSourceSync(resource);
+                batchEntries.push(this.createBatchEntry(resource));
+            }
+
+            // Update statistics
+            this.incrementStat('totalResourcesAnalyzed', analyzed);
+            this.incrementStat('totalResourcesLabeled', labeled);
+            this.incrementStat('totalResourcesSkipped', skipped);
+
+            return this.createBatchBundle(batchEntries, {
+                analyzed,
+                labeled,
+                skipped
+            });
+
+        } catch (error) {
+            console.error('Error analyzing resources:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Get all rules from database
+     */
+    getAllRules() {
+        const rows = this.db.prepare('SELECT * FROM rules').all();
+        const rules = {};
+        for (const row of rows) {
+            rules[row.code_key] = {
+                code: row.topic_code,
+                system: row.topic_system,
+                display: row.topic_display
+            };
+        }
+        return rules;
+    }
+
+    /**
+     * Check if resource should be skipped
+     */
+    shouldSkipResource(resource, earliestDate) {
+        if (!earliestDate || !resource.meta || !resource.meta.extension) {
+            return false;
+        }
+
+        const syncExt = resource.meta.extension.find(
+            ext => ext.url === this.LAST_SOURCE_SYNC_URL
+        );
+
+        if (!syncExt || !syncExt.valueDateTime) {
+            return false;
+        }
+
+        const syncDate = new Date(syncExt.valueDateTime);
+        return syncDate > new Date(earliestDate);
+    }
+
+    /**
+     * Analyze resource for sensitive codes
+     */
+    analyzeResource(resource, rules) {
+        const matchedTopics = new Set();
+        this.findAndCheckCodes(resource, rules, matchedTopics);
+        return Array.from(matchedTopics);
+    }
+
+    /**
+     * Recursively find and check codes
+     */
+    findAndCheckCodes(obj, rules, matchedTopics) {
+        if (!obj || typeof obj !== 'object') {
+            return;
+        }
+
+        if (obj.system && obj.code) {
+            const key = `${obj.system}|${obj.code}`;
+            if (rules[key]) {
+                matchedTopics.add(JSON.stringify(rules[key]));
+            }
+        }
+
+        if (obj.coding && Array.isArray(obj.coding)) {
+            for (const coding of obj.coding) {
+                this.findAndCheckCodes(coding, rules, matchedTopics);
+            }
+        }
+
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                if (Array.isArray(obj[key])) {
+                    for (const item of obj[key]) {
+                        this.findAndCheckCodes(item, rules, matchedTopics);
+                    }
+                } else if (typeof obj[key] === 'object') {
+                    this.findAndCheckCodes(obj[key], rules, matchedTopics);
+                }
+            }
+        }
+    }
+
+    /**
+     * Apply security labels to resource
+     */
+    applySecurityLabels(resource, matchedTopics) {
+        if (!resource.meta) {
+            resource.meta = {};
+        }
+
+        if (!resource.meta.security) {
+            resource.meta.security = [];
+        }
+
+        const hasRestricted = resource.meta.security.some(
+            sec => sec.system === 'http://terminology.hl7.org/CodeSystem/v3-Confidentiality' && sec.code === 'R'
+        );
+
+        if (!hasRestricted) {
+            resource.meta.security.push({
+                system: 'http://terminology.hl7.org/CodeSystem/v3-Confidentiality',
+                code: 'R',
+                display: 'restricted'
+            });
+        }
+
+        for (const topicJson of matchedTopics) {
+            const topic = JSON.parse(topicJson);
+            
+            const hasTopic = resource.meta.security.some(
+                sec => sec.system === topic.system && sec.code === topic.code
+            );
+
+            if (!hasTopic) {
+                resource.meta.security.push({
+                    system: topic.system,
+                    code: topic.code,
+                    display: topic.display
+                });
+            }
+        }
+    }
+
+    /**
+     * Add lastSourceSync extension
+     */
+    addLastSourceSync(resource) {
+        if (!resource.meta) {
+            resource.meta = {};
+        }
+
+        if (!resource.meta.extension) {
+            resource.meta.extension = [];
+        }
+
+        resource.meta.extension = resource.meta.extension.filter(
+            ext => ext.url !== this.LAST_SOURCE_SYNC_URL
+        );
+
+        resource.meta.extension.push({
+            url: this.LAST_SOURCE_SYNC_URL,
+            valueDateTime: new Date().toISOString()
+        });
+    }
+
+    /**
+     * Create batch entry
+     */
+    createBatchEntry(resource) {
+        return {
+            request: {
+                method: 'PUT',
+                url: `${resource.resourceType}/${resource.id}`
+            },
+            resource: resource
+        };
+    }
+
+    /**
+     * Create FHIR Batch Bundle
+     */
+    createBatchBundle(entries, stats) {
+        const securityLabels = this.collectDistinctSecurityLabels(entries);
+        
+        const bundle = {
+            resourceType: 'Bundle',
+            type: 'batch',
+            meta: {
+                lastUpdated: new Date().toISOString(),
+                tag: [{
+                    system: 'http://example.org/fhir/CodeSystem/sls-processing',
+                    code: 'sls-tagged',
+                    display: 'SLS Security Labeled'
+                }]
+            },
+            entry: entries,
+            extension: [{
+                url: 'http://example.org/fhir/StructureDefinition/processing-summary',
+                extension: [
+                    { url: 'analyzed', valueInteger: stats.analyzed },
+                    { url: 'labeled', valueInteger: stats.labeled },
+                    { url: 'skipped', valueInteger: stats.skipped }
+                ]
+            }]
+        };
+        
+        if (securityLabels.length > 0) {
+            bundle.meta.security = securityLabels;
+        }
+        
+        return bundle;
+    }
+
+    /**
+     * Collect distinct security labels from all resources
+     */
+    collectDistinctSecurityLabels(entries) {
+        const securityMap = new Map();
+        
+        for (const entry of entries) {
+            const resource = entry.resource;
+            
+            if (resource.meta && resource.meta.security && Array.isArray(resource.meta.security)) {
+                for (const security of resource.meta.security) {
+                    const key = `${security.system}|${security.code}`;
+                    
+                    if (!securityMap.has(key)) {
+                        securityMap.set(key, {
+                            system: security.system,
+                            code: security.code,
+                            display: security.display
+                        });
+                    }
+                }
+            }
+        }
+        
+        return Array.from(securityMap.values());
+    }
+
+    /**
+     * Create FHIR OperationOutcome
+     */
+    createOperationOutcome(severity, message, details = null) {
+        const outcome = {
+            resourceType: 'OperationOutcome',
+            issue: [{
+                severity: severity,
+                code: severity === 'success' ? 'informational' : 'processing',
+                diagnostics: message
+            }]
+        };
+
+        if (details && details.length > 0) {
+            for (const detail of details) {
+                outcome.issue.push({
+                    severity: 'warning',
+                    code: 'processing',
+                    diagnostics: detail
+                });
+            }
+        }
+
+        return outcome;
+    }
+
+    /**
+     * Get status information
+     */
+    getStatus() {
+        const valueSets = this.db.prepare('SELECT id, date FROM valuesets').all();
+        const rulesCount = this.db.prepare('SELECT COUNT(*) as count FROM rules').get();
+        const stats = this.getStats();
+        const earliestDate = this.getMetadata('earliestDate');
+
+        return {
+            valueSets: valueSets.map(vs => ({
+                id: vs.id,
+                date: vs.date
+            })),
+            rulesCount: rulesCount.count,
+            earliestDate: earliestDate,
+            stats: stats
+        };
+    }
+
+    /**
+     * Database helper methods
+     */
+    getMetadata(key) {
+        const row = this.db.prepare('SELECT value FROM metadata WHERE key = ?').get(key);
+        return row ? row.value : null;
+    }
+
+    setMetadata(key, value) {
+        this.db.prepare('INSERT OR REPLACE INTO metadata (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)')
+            .run(key, value);
+    }
+
+    getStats() {
+        const rows = this.db.prepare('SELECT key, value FROM stats').all();
+        const stats = {};
+        for (const row of rows) {
+            stats[row.key] = row.value;
+        }
+        return stats;
+    }
+
+    incrementStat(key, increment = 1) {
+        this.db.prepare('UPDATE stats SET value = value + ?, updated_at = CURRENT_TIMESTAMP WHERE key = ?')
+            .run(increment, key);
+    }
+
+    clearAllData() {
+        this.db.exec(`
+            DELETE FROM valuesets;
+            DELETE FROM rules;
+            DELETE FROM metadata;
+            UPDATE stats SET value = 0, updated_at = CURRENT_TIMESTAMP;
+        `);
+    }
+
+    close() {
+        this.db.close();
+    }
+}
+
+module.exports = FHIRSecurityLabelingService;

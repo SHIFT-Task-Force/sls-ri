@@ -104,7 +104,37 @@ graph LR
 
 ## Getting Started
 
-### Quick Start
+### Deployment Options
+
+This service can be deployed in two ways:
+
+#### Option 1: Docker Deployment (Recommended for Production)
+
+Full backend API with persistent database:
+
+```bash
+# Clone the repository
+git clone https://github.com/SHIFT-Task-Force/sls-ri.git
+cd sls-ri
+
+# Start with Docker Compose
+docker-compose up -d
+
+# Access at http://localhost:3000
+```
+
+See [DOCKER.md](DOCKER.md) for complete Docker deployment guide.
+
+**Features:**
+- ✅ REST API endpoints
+- ✅ Persistent SQLite database
+- ✅ Containerized deployment
+- ✅ Production-ready
+- ✅ Scalable architecture
+
+#### Option 2: GitHub Pages (Client-Side Only)
+
+Static hosting with browser-based processing:
 
 1. **Visit the Live Demo**: [https://SHIFT-Task-Force.github.io/sls-ri/](https://SHIFT-Task-Force.github.io/sls-ri/)
 
@@ -122,12 +152,21 @@ graph LR
    # Navigate to: http://localhost:8000
    ```
 
+**Features:**
+- ✅ No backend required
+- ✅ Free GitHub Pages hosting
+- ✅ Browser localStorage
+- ✅ Complete privacy (client-side only)
+
+### Try the Sample Data
+
 3. **Try the Sample Data**:
    - Click "API 1: Setup Sensitive Topics"
    - Click "Load Sample ValueSet Bundle"
    - Click "Process ValueSets"
    - Switch to "API 2: Tag Clinical Resources"
    - Click "Load Sample Resource Bundle"
+   - Click "Analyze & Tag Resources"
    - Click "Analyze & Tag Resources"
 
 ### Usage Examples
@@ -181,25 +220,53 @@ The service analyzes resources and applies security labels:
 
 ```
 sls-ri/
-├── index.html          # Main application interface
-├── fhir-sls.js         # Core FHIR processing engine
-├── app.js              # UI logic and event handlers
-├── styles.css          # Application styling
-├── README.md           # This file
-├── DEPLOYMENT.md       # Deployment guide
-└── .nojekyll           # GitHub Pages configuration
+├── backend/                 # Backend API Service (Docker)
+│   ├── server.js           # Express API server
+│   ├── fhir-sls-service.js # Core FHIR processing engine
+│   ├── package.json        # Node.js dependencies
+│   └── Dockerfile          # Backend container config
+├── frontend/               # Frontend UI
+│   ├── index.html         # Main application interface
+│   ├── app.js             # UI logic (backend API calls)
+│   └── styles.css         # Application styling
+├── index.html             # GitHub Pages version (client-side)
+├── fhir-sls.js           # Client-side core engine
+├── app.js                # Client-side UI logic
+├── styles.css            # Shared styling
+├── docker-compose.yml    # Docker orchestration
+├── README.md             # This file
+├── DOCKER.md             # Docker deployment guide
+├── DEPLOYMENT.md         # GitHub Pages deployment guide
+└── .dockerignore         # Docker build exclusions
 ```
 
 ## Technology Stack
 
+### Backend (Docker Deployment)
+- **Runtime**: Node.js 18 (Alpine Linux)
+- **Framework**: Express.js
+- **Database**: SQLite (better-sqlite3)
+- **Container**: Docker + Docker Compose
+- **Deployment**: Docker-ready, cloud-deployable (AWS, Azure, GCP)
+
+### Frontend (Both Deployments)
 - **Frontend**: Pure HTML5, CSS3, JavaScript (ES6+)
-- **Storage**: Browser localStorage API
-- **Deployment**: GitHub Pages (static hosting)
 - **Standards**: FHIR R4, US Core Implementation Guide (USCDI v4)
 
-### Why Client-Side?
+### Client-Side Only (GitHub Pages)
+- **Storage**: Browser localStorage API
+- **Deployment**: GitHub Pages (static hosting)
 
-This implementation runs entirely in the browser for several reasons:
+### Why Two Deployment Options?
+
+#### Docker (Backend + Database)
+- ✅ **Production-Ready**: Proper API service with persistent storage
+- ✅ **Scalable**: Can handle multiple concurrent users
+- ✅ **Stateful**: Database persists across sessions
+- ✅ **API Access**: Can be called by any HTTP client
+- ✅ **Cloud-Ready**: Deploy to AWS, Azure, GCP
+
+#### GitHub Pages (Client-Side)
 - ✅ **Privacy**: No data leaves the user's browser
 - ✅ **Simplicity**: No backend infrastructure required
 - ✅ **Cost**: Free hosting on GitHub Pages
@@ -207,6 +274,29 @@ This implementation runs entirely in the browser for several reasons:
 - ✅ **Transparency**: All code is visible and auditable
 
 ## Architecture
+
+### Docker Deployment (Backend + Frontend)
+
+```
+┌─────────────────────────────────────┐
+│       Docker Container              │
+├─────────────────────────────────────┤
+│  Express.js Server (Port 3000)      │
+│    ├─ REST API (/api/v1/...)       │
+│    ├─ Static Frontend Files        │
+│    └─ SQLite Database (Volume)     │
+└─────────────────────────────────────┘
+         ↑
+         │ HTTP/REST
+         ↓
+┌─────────────────────────────────────┐
+│      Client Browser                 │
+│  ├─ UI (HTML/CSS/JS)               │
+│  └─ Fetch API calls                │
+└─────────────────────────────────────┘
+```
+
+### GitHub Pages Deployment (Client-Side Only)
 
 ```
 ┌─────────────────────────────────────┐
@@ -253,10 +343,19 @@ Supports 16 clinical resource types from USCDI v4:
 
 ## Limitations
 
+### Docker Deployment
+⚠️ **SQLite**: Single-writer limitation (use PostgreSQL for high concurrency)
+⚠️ **Scaling**: Horizontal scaling requires shared database
+⚠️ **Resources**: Requires Docker infrastructure
+
+### GitHub Pages Deployment  
 ⚠️ **Storage**: localStorage limited to ~5-10MB per domain
 ⚠️ **Performance**: Not optimized for large datasets (100s of resources)
+⚠️ **Persistence**: Data only in browser, no server backup
+
+### Both Deployments
 ⚠️ **Browsers**: Requires modern browser with ES6+ support
-⚠️ **Scale**: Designed for reference/demonstration, not production use
+⚠️ **Scale**: Designed for reference/demonstration, not production use at scale
 
 ## Contributing
 
