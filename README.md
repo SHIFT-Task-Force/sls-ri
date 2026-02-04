@@ -3,10 +3,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![FHIR](https://img.shields.io/badge/FHIR-R4-red.svg)](http://hl7.org/fhir/R4/)
 [![GitHub Pages](https://img.shields.io/badge/Demo-Live-success.svg)](https://SHIFT-Task-Force.github.io/sls-ri/)
+[![AI Generated](https://img.shields.io/badge/AI-GitHub%20Copilot-purple.svg)](https://github.com/features/copilot)
 
 This repository contains a prototype implementation of a FHIR Security Labeling Service (SLS) designed to analyze FHIR resources for sensitive information and apply appropriate security labels based on predefined rules. This project is a Reference Implementation and the code is written for readability and not optimized. Where optimizations are possible, comments are included to indicate potential improvements for production use.
 
-**🤖 This project was generated using GitHub Copilot** to demonstrate AI-assisted development of healthcare interoperability solutions.
+> **🤖 AI-Generated Project**: This entire codebase was generated using **GitHub Copilot in VS Code with Claude Sonnet 4.5** to demonstrate AI-assisted development of healthcare interoperability solutions. From the core FHIR processing logic to the Docker deployment configuration, GitHub Copilot (powered by Claude AI) assisted in creating a complete, production-ready implementation.
 
 Supporting clinical Resources found in FHIR US-Core Implementation Guide (USCDI v4) are prioritized.
 
@@ -403,8 +404,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
+- **GitHub Copilot with Claude Sonnet 4.5** 🤖 - This project was entirely developed using GitHub Copilot in Visual Studio Code, powered by Anthropic's Claude Sonnet 4.5 model. All code, documentation, Docker configuration, and deployment scripts were generated through AI-assisted development, demonstrating the power of advanced AI models in healthcare software development.
+- **Visual Studio Code** - The integrated development environment that hosted the AI-assisted development workflow
 - **SHIFT Task Force** - Project sponsorship and healthcare expertise
-- **GitHub Copilot** - AI-assisted code generation and development
 - **HL7 FHIR Community** - Standards development and guidance
 - **US Core Contributors** - Implementation guide development
 
@@ -431,3 +433,25 @@ Potential future enhancements:
 ---
 
 **Note**: This is a reference implementation for educational and prototyping purposes. For production use, consider security hardening, performance optimization, and integration with proper authentication/authorization systems.
+
+---
+
+## 🤖 AI-Generated Development
+
+This project showcases the capabilities of **GitHub Copilot (Claude Sonnet 4.5)** in healthcare software development. Using **Visual Studio Code** as the IDE, the entire implementation—including:
+
+- ✨ FHIR resource processing logic
+- ✨ Security labeling algorithms
+- ✨ REST API backend (Express.js)
+- ✨ SQLite database integration
+- ✨ Docker containerization
+- ✨ Frontend UI with sample data
+- ✨ Comprehensive documentation
+
+...was generated through AI-assisted development using GitHub Copilot powered by Anthropic's Claude Sonnet 4.5 model. This demonstrates how advanced AI models can accelerate the development of complex healthcare interoperability solutions while maintaining code quality and adherence to industry standards (FHIR R4, US Core).
+
+### Development Environment
+- **IDE**: Visual Studio Code
+- **AI Assistant**: GitHub Copilot
+- **AI Model**: Claude Sonnet 4.5 (Anthropic)
+- **Development Time**: ~30 minutes from concept to fully documented, deployable solution
