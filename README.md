@@ -162,6 +162,7 @@ Static hosting with browser-based processing:
 - ✅ Free GitHub Pages hosting
 - ✅ Browser localStorage
 - ✅ Complete privacy (client-side only)
+- ⚠️ URL fetching may be limited by CORS policies (use Docker deployment for unrestricted URL access)
 
 ### Try the Sample Data
 
@@ -182,6 +183,7 @@ Static hosting with browser-based processing:
 **Input Options:**
 - Paste JSON directly into the textarea
 - Enter a URL to a JSON file and click "Fetch from URL" to load it
+  - **Note**: In the browser/GitHub Pages version, URL fetching may fail due to CORS (Cross-Origin Resource Sharing) restrictions if the target server doesn't allow cross-origin requests. Use the Docker deployment for unrestricted URL access, or paste the JSON directly.
 
 **Example JSON:**
 

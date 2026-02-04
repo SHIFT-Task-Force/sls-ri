@@ -54,7 +54,19 @@ async function fetchValueSetFromUrl() {
         output.className = 'output success';
         
     } catch (error) {
-        output.textContent = `Error fetching from URL: ${error.message}`;
+        let errorMessage = `Error fetching from URL: ${error.message}`;
+        
+        // Check if it's a CORS error
+        if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
+            errorMessage += '\n\nNote: This is likely a CORS (Cross-Origin Resource Sharing) issue. ' +
+                'The URL you are trying to access does not allow requests from this browser origin.\n' +
+                'Solutions:\n' +
+                '1. Use the Docker deployment (no CORS restrictions)\n' +
+                '2. Download the JSON file and paste it directly into the textarea\n' +
+                '3. Use a CORS proxy service (e.g., https://corsproxy.io/?url=YOUR_URL)';
+        }
+        
+        output.textContent = errorMessage;
         output.className = 'output error';
     }
 }
@@ -125,7 +137,19 @@ async function fetchResourceFromUrl() {
         output.className = 'output success';
         
     } catch (error) {
-        output.textContent = `Error fetching from URL: ${error.message}`;
+        let errorMessage = `Error fetching from URL: ${error.message}`;
+        
+        // Check if it's a CORS error
+        if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
+            errorMessage += '\n\nNote: This is likely a CORS (Cross-Origin Resource Sharing) issue. ' +
+                'The URL you are trying to access does not allow requests from this browser origin.\n' +
+                'Solutions:\n' +
+                '1. Use the Docker deployment (no CORS restrictions)\n' +
+                '2. Download the JSON file and paste it directly into the textarea\n' +
+                '3. Use a CORS proxy service (e.g., https://corsproxy.io/?url=YOUR_URL)';
+        }
+        
+        output.textContent = errorMessage;
         output.className = 'output error';
     }
 }
