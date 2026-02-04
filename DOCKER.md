@@ -9,10 +9,33 @@ This guide covers deploying the FHIR SLS as a containerized service using Docker
 - 2GB free disk space
 - Port 3000 available
 
+### Windows-Specific Requirements
+
+**Important for Windows Users:**
+- **Ensure Docker Desktop is running** (check system tray for Docker icon)
+- Enable WSL 2 backend in Docker Desktop settings (recommended)
+- Make sure the project folder is in a location accessible to Docker (usually C:\Users\<username>\...)
+- Git should be configured with `core.autocrlf=false` to avoid line ending issues
+
+**Starting Docker Desktop:**
+1. Open Docker Desktop from Start Menu
+2. Wait for "Docker Desktop is running" status
+3. Verify by running: `docker --version`
+
 ## Quick Start
 
 ### 1. Build and Start the Service
 
+**Windows PowerShell:**
+```powershell
+# From the project root directory
+docker-compose up -d
+
+# Or use Docker Compose V2 command
+docker compose up -d
+```
+
+**Linux/Mac:**
 ```bash
 # From the project root directory
 docker-compose up -d
@@ -254,14 +277,65 @@ server {
 
 ## Troubleshooting
 
-### Container Won't Start
+### Windows-Specific Issues
+
+#### Docker Compose Not Found
+```powershell
+# Docker Desktop uses Docker Compose V2
+# Use this command instead:
+docker compose up -d
+
+# Or install standalone docker-compose
+```
+
+#### Line Ending Issues (CRLF/LF)
+```powershell
+# Configure git to avoid line ending conversion
+git config --global core.autocrlf false
+
+# Re-clone or reset files
+git rm --cached -r .
+git reset --hard
+```
+
+#### Volume Mount Issues
+```powershell
+# Ensure project is in accessible location (not on network drive)
+# Preferred: C:\Users\<username>\...
+
+# Check Docker Desktop settings:
+# Settings > Resources > File Sharing
+# Ensure C:\ drive is shared
+```
+
+#### Port Already in Use
+```powershell
+# Check what's using port 3000
+netstat -ano | findstr :3000
+
+# Kill the process (replace PID)
+taskkill /PID <PID> /F
+
+# Or change port in docker-compose.yml
+# ports:
+#   - "8080:3000"
+```
+
+### General Issues
+
+#### Container Won't Start
 ```bash
 # Check logs
 docker-compose logs sls-backend
 
-# Check if port is in use
-netstat -an | findstr :3000  # Windows
-lsof -i :3000                # Mac/Linux
+# Or with V2
+docker compose logs sls-backend
+
+# Check if port is in use (Windows)
+netstat -an | findstr :3000
+
+# Check if port is in use (Mac/Linux)
+lsof -i :3000
 ```
 
 ### Database Issues

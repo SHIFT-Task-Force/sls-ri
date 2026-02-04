@@ -136,11 +136,11 @@ app.delete('/api/v1/data', (req, res) => {
 });
 
 // Serve static frontend files
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 // Catch-all route for SPA
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 
 // Error handling middleware
