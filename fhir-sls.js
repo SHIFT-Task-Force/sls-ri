@@ -46,73 +46,70 @@ class FHIRSecurityLabelingService {
     }
 
     /**
-     * API 1: Process ValueSet Bundle
+     * API 1: Process ValueSet Bundle or single ValueSet
      * Loads ValueSets and builds internal rule set for sensitive topic detection
      * 
-     * @param {Object} bundle - FHIR Bundle containing ValueSet resources
+     * @param {Object} input - FHIR Bundle or single ValueSet resource
      * @returns {Object} - FHIR OperationOutcome
      */
-    processValueSetBundle(bundle) {
+    processValueSetBundle(input) {
         try {
-            // Validate bundle
-            if (!bundle || bundle.resourceType !== 'Bundle') {
-                return this.createOperationOutcome('error', 'Invalid Bundle: resourceType must be "Bundle"');
-            }
-
-            if (!bundle.entry || bundle.entry.length === 0) {
-                return this.createOperationOutcome('warning', 'Bundle contains no entries');
-            }
-
-            const valueSets = [];
-            const errors = [];
+            let valueSets = [];
+            let errors = [];
             let earliestDate = null;
 
-            // Process each entry in the bundle
-            for (const entry of bundle.entry) {
-                const resource = entry.resource;
+            // Handle single ValueSet
+            if (input && input.resourceType === 'ValueSet') {
+                const validation = this.validateValueSet(input);
+                if (validation.errors.length > 0) {
+                    return this.createOperationOutcome('error', 'Invalid ValueSet', validation.errors);
+                }
                 
-                // Validate resource type
-                if (!resource || resource.resourceType !== 'ValueSet') {
-                    errors.push(`Skipping non-ValueSet resource: ${resource?.resourceType || 'unknown'}`);
-                    continue;
+                valueSets.push(input);
+                if (input.date) {
+                    earliestDate = new Date(input.date);
+                }
+            }
+            // Handle Bundle
+            else if (input && input.resourceType === 'Bundle') {
+                if (!input.entry || input.entry.length === 0) {
+                    return this.createOperationOutcome('warning', 'Bundle contains no entries');
                 }
 
-                // Validate required fields
-                if (!resource.id) {
-                    errors.push('ValueSet missing required field: id');
-                    continue;
-                }
-
-                if (!resource.topic || resource.topic.length === 0) {
-                    errors.push(`ValueSet ${resource.id} missing required field: topic`);
-                    continue;
-                }
-
-                if (!resource.expansion || !resource.expansion.contains) {
-                    errors.push(`ValueSet ${resource.id} missing expansion.contains`);
-                    continue;
-                }
-
-                // Extract sensitive topic code from topic element
-                const topicCoding = resource.topic[0].coding ? resource.topic[0].coding[0] : null;
-                if (!topicCoding || !topicCoding.code) {
-                    errors.push(`ValueSet ${resource.id} topic missing coding.code`);
-                    continue;
-                }
-
-                // Track earliest date
-                if (resource.date) {
-                    const resourceDate = new Date(resource.date);
-                    if (!earliestDate || resourceDate < earliestDate) {
-                        earliestDate = resourceDate;
+                // Process each entry in the bundle
+                for (const entry of input.entry) {
+                    const resource = entry.resource;
+                    
+                    // Validate resource type
+                    if (!resource || resource.resourceType !== 'ValueSet') {
+                        errors.push(`Skipping non-ValueSet resource: ${resource?.resourceType || 'unknown'}`);
+                        continue;
                     }
-                }
 
-                valueSets.push(resource);
+                    const validation = this.validateValueSet(resource);
+                    if (validation.errors.length > 0) {
+                        errors.push(...validation.errors);
+                        continue;
+                    }
+
+                    // Track earliest date
+                    if (resource.date) {
+                        const resourceDate = new Date(resource.date);
+                        if (!earliestDate || resourceDate < earliestDate) {
+                            earliestDate = resourceDate;
+                        }
+                    }
+
+                    valueSets.push(resource);
+                }
+            }
+            // Invalid input
+            else {
+                return this.createOperationOutcome('error', 'Invalid input: resourceType must be "Bundle" or "ValueSet"');
             }
 
             if (valueSets.length === 0) {
-                return this.createOperationOutcome('error', 'No valid ValueSets found in bundle', errors);
+                return this.createOperationOutcome('error', 'No valid ValueSets found', errors);
             }
 
             // Store ValueSets and build rules
@@ -134,6 +131,57 @@ class FHIRSecurityLabelingService {
         } catch (error) {
             return this.createOperationOutcome('error', `Processing failed: ${error.message}`);
         }
+    }
+
+    /**
+     * Validate a ValueSet resource
+     */
+    validateValueSet(resource) {
+        const errors = [];
+
+        if (!resource.id) {
+            errors.push('ValueSet missing required field: id');
+        }
+
+        // Check for topic in either topic element or useContext with focus
+        const topicCoding = this.extractTopicCoding(resource);
+        if (!topicCoding) {
+            errors.push(`ValueSet ${resource.id || 'unknown'} missing topic: must have either topic[0].coding[0] or useContext with code=focus`);
+        }
+
+        if (!resource.expansion || !resource.expansion.contains) {
+            errors.push(`ValueSet ${resource.id || 'unknown'} missing expansion.contains`);
+        }
+
+        return { errors };
+    }
+
+    /**
+     * Extract topic coding from either topic element or useContext
+     */
+    extractTopicCoding(resource) {
+        // Try topic element first
+        if (resource.topic && resource.topic.length > 0) {
+            const topicCoding = resource.topic[0].coding ? resource.topic[0].coding[0] : null;
+            if (topicCoding && topicCoding.code) {
+                return topicCoding;
+            }
+        }
+
+        // Try useContext with focus
+        if (resource.useContext && resource.useContext.length > 0) {
+            const focusContext = resource.useContext.find(
+                ctx => ctx.code && ctx.code.code === 'focus'
+            );
+            if (focusContext && focusContext.valueCodeableConcept && focusContext.valueCodeableConcept.coding) {
+                const coding = focusContext.valueCodeableConcept.coding[0];
+                if (coding && coding.code) {
+                    return coding;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -171,7 +219,9 @@ class FHIRSecurityLabelingService {
 
         for (const vs of valueSets) {
             // Get the sensitive topic from the ValueSet
-            const topicCoding = vs.topic[0].coding[0];
+            const topicCoding = this.extractTopicCoding(vs);
+            if (!topicCoding) continue; // Should not happen if validation passed
+
             const topicCode = topicCoding.code;
             const topicSystem = topicCoding.system;
             const topicDisplay = topicCoding.display || topicCode;

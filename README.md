@@ -42,11 +42,13 @@ Supporting clinical Resources found in FHIR US-Core Implementation Guide (USCDI 
 This is a Web Service that has the following 2 APIs:
 
 1. Setup Sensitive topics
-    - Receives a FHIR Bundle holding one or more FHIR ValueSet resources, where the ValueSet resources contain codes that define sensitive categories (e.g., mental health, substance abuse, HIV status).
+    - Receives a FHIR Bundle or single ValueSet containing codes that define sensitive categories (e.g., mental health, substance abuse, HIV status).
     - for Each ValueSet resource
         - Processes and stores these ValueSet resources to build an internal rule set for identifying sensitive information in FHIR resources.
         - Each ValueSet the expansion will hold codes from standard terminologies (e.g., SNOMED CT, LOINC, ICD-10) that correspond to sensitive topics.
-        - The Sensitive topic code is indicated in the ValueSet.topic element.
+        - The Sensitive topic code is indicated in either:
+            - `ValueSet.topic[0].coding[0]` element, OR
+            - `ValueSet.useContext` with `code.code = 'focus'` and the topic in `valueCodeableConcept.coding[0]`
     - Recording the earliest dateTime from the ValueSet.date element to determine the effective date for the sensitive categories.
     - Returning an OperationOutcome indicating success or failure of the ValueSet processing.
 2. Tag a Bundle of Clinical Resources
@@ -65,9 +67,9 @@ This is a Web Service that has the following 2 APIs:
 ```mermaid
 graph LR
   subgraph API1["API 1: Setup Sensitive Topics"]
-    A[ValueSet Bundle] --> B[Load & Store ValueSets]
+    A[ValueSet Bundle or<br/>Single ValueSet] --> B[Load & Store ValueSets]
     B --> C[Build Internal Rule Set<br/>from expansion codes]
-    C --> D[Extract ValueSet.topic]
+    C --> D[Extract topic from<br/>topic or useContext]
     D --> E[Track Earliest ValueSet.date]
     E --> F[Return OperationOutcome]
   end
