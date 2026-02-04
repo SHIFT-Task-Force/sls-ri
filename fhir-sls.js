@@ -445,7 +445,10 @@ class FHIRSecurityLabelingService {
      * Create FHIR Batch Bundle
      */
     createBatchBundle(entries, stats) {
-        return {
+        // Collect distinct security labels from all resources in the bundle
+        const securityLabels = this.collectDistinctSecurityLabels(entries);
+        
+        const bundle = {
             resourceType: 'Bundle',
             type: 'batch',
             meta: {
@@ -467,6 +470,44 @@ class FHIRSecurityLabelingService {
                 ]
             }]
         };
+        
+        // Add distinct security labels to Bundle.meta.security if any exist
+        if (securityLabels.length > 0) {
+            bundle.meta.security = securityLabels;
+        }
+        
+        return bundle;
+    }
+
+    /**
+     * Collect distinct security labels from all resources in batch entries
+     */
+    collectDistinctSecurityLabels(entries) {
+        const securityMap = new Map();
+        
+        for (const entry of entries) {
+            const resource = entry.resource;
+            
+            // Check if resource has security labels
+            if (resource.meta && resource.meta.security && Array.isArray(resource.meta.security)) {
+                for (const security of resource.meta.security) {
+                    // Create a unique key for deduplication
+                    const key = `${security.system}|${security.code}`;
+                    
+                    // Only add if not already present
+                    if (!securityMap.has(key)) {
+                        securityMap.set(key, {
+                            system: security.system,
+                            code: security.code,
+                            display: security.display
+                        });
+                    }
+                }
+            }
+        }
+        
+        // Convert map values to array
+        return Array.from(securityMap.values());
     }
 
     /**

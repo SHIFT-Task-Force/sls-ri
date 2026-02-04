@@ -55,8 +55,10 @@ This is a Web Service that has the following 2 APIs:
         - Analyzing each resource's elements that are code, coding, or codeableConcept to identify any codes that match the internal rule set of sensitive categories.
         - For resources that contain sensitive information, applying FHIR security labels to the resource's meta.security element, including:
             - The confidentialityCode `R` (restricted)
+            - Topic-specific security labels from matched sensitive categories
         - Add the lastSourceSync extension to the resource's meta element with the current dateTime.
     - Build a new FHIR Batch Bundle, with update actions for each Resource that was analyzed.
+    - The output Bundle.meta.security contains distinct (deduplicated) security labels from all resources in the bundle, providing a summary of all sensitive categories present.
     - Returning the Batch Bundle as the response.
 
 ```mermaid
@@ -83,7 +85,9 @@ graph LR
     N --> O
     
     O --> P[Build Batch Bundle<br/>with update actions]
-    P --> Q[Return Batch Bundle]
+    P --> R[Collect Distinct Security Labels]
+    R --> S[Add to Bundle.meta.security]
+    S --> Q[Return Batch Bundle]
   end
   
   API1 -.-> API2
@@ -163,10 +167,15 @@ graph LR
 The service analyzes resources and applies security labels:
 
 **Input**: Bundle with clinical resources
-**Output**: Batch Bundle with updated resources containing:
-- `meta.security` with confidentialityCode `R` (restricted)
-- Additional security labels for matched sensitive topics
-- `meta.extension` with lastSourceSync timestamp
+
+**Output**: Batch Bundle with:
+- Each resource's `meta.security` containing:
+  - confidentialityCode `R` (restricted) if sensitive content detected
+  - Topic-specific security labels for matched sensitive categories
+  - `meta.extension` with lastSourceSync timestamp
+- Bundle's `meta.security` containing:
+  - Distinct (deduplicated) security labels from all resources
+  - Provides at-a-glance summary of sensitive content types in the bundle
 
 ## Project Structure
 
@@ -223,6 +232,7 @@ This implementation runs entirely in the browser for several reasons:
 - Applies FHIR `meta.security` labels based on sensitive content
 - Uses confidentialityCode `R` (restricted) for sensitive resources
 - Adds topic-specific security labels from ValueSet definitions
+- **Bundle-level security summary**: `Bundle.meta.security` contains distinct security labels from all resources, providing an at-a-glance view of sensitive content types
 
 ### 📊 Smart Analysis
 - Recursively searches all `code`, `coding`, and `codeableConcept` elements
