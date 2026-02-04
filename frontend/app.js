@@ -24,6 +24,38 @@ function showTab(tabName) {
     }
 }
 
+// Fetch ValueSet Bundle/ValueSet from URL
+async function fetchValueSetFromUrl() {
+    const url = document.getElementById('valuesetUrl').value.trim();
+    const output = document.getElementById('valuesetOutput');
+    
+    if (!url) {
+        output.textContent = 'Please provide a URL.';
+        output.className = 'output error';
+        return;
+    }
+    
+    try {
+        output.textContent = 'Fetching from URL...';
+        output.className = 'output';
+        
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        document.getElementById('valuesetInput').value = JSON.stringify(data, null, 2);
+        
+        output.textContent = 'Successfully fetched from URL. Click "Process ValueSets" to continue.';
+        output.className = 'output success';
+        
+    } catch (error) {
+        output.textContent = `Error fetching from URL: ${error.message}`;
+        output.className = 'output error';
+    }
+}
+
 // API 1: Process ValueSets
 async function processValueSets() {
     const input = document.getElementById('valuesetInput').value.trim();
@@ -82,6 +114,38 @@ async function clearValueSets() {
         } catch (error) {
             alert(`Error clearing data: ${error.message}`);
         }
+    }
+}
+
+// Fetch Resource Bundle from URL
+async function fetchResourceFromUrl() {
+    const url = document.getElementById('resourceUrl').value.trim();
+    const output = document.getElementById('resourceOutput');
+    
+    if (!url) {
+        output.textContent = 'Please provide a URL.';
+        output.className = 'output error';
+        return;
+    }
+    
+    try {
+        output.textContent = 'Fetching from URL...';
+        output.className = 'output';
+        
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        document.getElementById('resourceInput').value = JSON.stringify(data, null, 2);
+        
+        output.textContent = 'Successfully fetched from URL. Click "Analyze & Tag Resources" to continue.';
+        output.className = 'output success';
+        
+    } catch (error) {
+        output.textContent = `Error fetching from URL: ${error.message}`;
+        output.className = 'output error';
     }
 }
 

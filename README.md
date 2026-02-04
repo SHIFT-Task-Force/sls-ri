@@ -7,7 +7,7 @@
 
 This repository contains a prototype implementation of a FHIR Security Labeling Service (SLS) designed to analyze FHIR resources for sensitive information and apply appropriate security labels based on predefined rules. This project is a Reference Implementation and the code is written for readability and not optimized. Where optimizations are possible, comments are included to indicate potential improvements for production use.
 
-> **🤖 AI-Generated Project**: This entire codebase was generated using **GitHub Copilot in VS Code with Claude Sonnet 4.5** to demonstrate AI-assisted development of healthcare interoperability solutions. From the core FHIR processing logic to the Docker deployment configuration, GitHub Copilot (powered by Claude AI) assisted in creating a complete, production-ready implementation.
+> **🤖 AI-Generated Project**: This entire codebase was generated using **GitHub Copilot in VS Code with Claude Sonnet 4.5** to demonstrate AI-assisted development of healthcare interoperability solutions. From the core FHIR processing logic to the Docker deployment configuration, GitHub Copilot (powered by Claude AI) assisted in creating a complete, production-ready implementation. At the direction of John Moehrke of [Moehrke Research LLC](https://MoehrkeResearch.com).
 
 Supporting clinical Resources found in FHIR US-Core Implementation Guide (USCDI v4) are prioritized.
 
@@ -167,16 +167,23 @@ Static hosting with browser-based processing:
 
 3. **Try the Sample Data**:
    - Click "API 1: Setup Sensitive Topics"
-   - Click "Load Sample ValueSet Bundle"
+   - **Option A**: Click "Load Sample ValueSet Bundle" to use built-in sample
+   - **Option B**: Enter a URL to a JSON file and click "Fetch from URL"
    - Click "Process ValueSets"
    - Switch to "API 2: Tag Clinical Resources"
-   - Click "Load Sample Resource Bundle"
-   - Click "Analyze & Tag Resources"
+   - **Option A**: Click "Load Sample Resource Bundle" to use built-in sample
+   - **Option B**: Enter a URL to a JSON file and click "Fetch from URL"
    - Click "Analyze & Tag Resources"
 
 ### Usage Examples
 
 #### API 1: Loading Sensitive Topic Definitions
+
+**Input Options:**
+- Paste JSON directly into the textarea
+- Enter a URL to a JSON file and click "Fetch from URL" to load it
+
+**Example JSON:**
 
 ```json
 {
@@ -209,6 +216,10 @@ Static hosting with browser-based processing:
 #### API 2: Analyzing Resources
 
 The service analyzes resources and applies security labels:
+
+**Input Options:**
+- Paste JSON directly into the textarea
+- Enter a URL to a JSON file and click "Fetch from URL" to load it
 
 **Input**: Bundle with clinical resources
 

@@ -26,7 +26,11 @@
             <p>Upload a FHIR Bundle containing ValueSet resources, or a single ValueSet, that define sensitive categories.</p>
             
             <div class="form-section">
-                <label for="valuesetInput">FHIR Bundle or ValueSet (JSON):</label>
+                <label for="valuesetUrl">Or fetch from URL:</label>
+                <input type="text" id="valuesetUrl" placeholder="https://example.com/valueset-bundle.json" />
+                <button onclick="fetchValueSetFromUrl()" class="secondary" style="margin-top: 5px;">Fetch from URL</button>
+                
+                <label for="valuesetInput" style="margin-top: 15px;">FHIR Bundle or ValueSet (JSON):</label>
                 <textarea id="valuesetInput" placeholder='Paste FHIR Bundle with ValueSets, or a single ValueSet resource...' rows="15"></textarea>
                 
                 <div class="button-group">
@@ -48,7 +52,11 @@
             <p>Upload a FHIR Bundle containing clinical resources to analyze for sensitive information.</p>
             
             <div class="form-section">
-                <label for="resourceInput">FHIR Bundle (JSON):</label>
+                <label for="resourceUrl">Or fetch from URL:</label>
+                <input type="text" id="resourceUrl" placeholder="https://example.com/resource-bundle.json" />
+                <button onclick="fetchResourceFromUrl()" class="secondary" style="margin-top: 5px;">Fetch from URL</button>
+                
+                <label for="resourceInput" style="margin-top: 15px;">FHIR Bundle (JSON):</label>
                 <textarea id="resourceInput" placeholder='Paste FHIR Bundle JSON with clinical resources...' rows="15"></textarea>
                 
                 <div class="button-group">
