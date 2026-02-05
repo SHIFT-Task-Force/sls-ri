@@ -106,93 +106,31 @@ graph LR
 
 This service implements two FHIR operations following the [FHIR R4 Operations Framework](http://hl7.org/fhir/R4/operations.html):
 
-### 1. `$sls-load-valuesets` Operation
+### 1. `$sls-load-valuesets` - Load ValueSets
 
 **Endpoint**: `POST [base]/$sls-load-valuesets`
 
-**Purpose**: Load and process ValueSet resources to establish security labeling rules
+Loads and processes ValueSet resources to establish security labeling rules. Accepts a Bundle of ValueSets and returns an OperationOutcome.
 
-**Input Parameter**:
-- `bundle` (Bundle, required): A FHIR Bundle containing one or more ValueSet resources
-
-**Output**:
-- `OperationOutcome`: Success/failure status with processing details
-
-**OperationDefinition**: Available at `GET [base]/OperationDefinition/sls-load-valuesets`
-
-**Example Request**:
-```bash
-POST http://localhost:3000/$sls-load-valuesets
-Content-Type: application/json
-
-{
-  "resourceType": "Bundle",
-  "type": "collection",
-  "entry": [{
-    "resource": {
-      "resourceType": "ValueSet",
-      ...
-    }
-  }]
-}
-```
-
-### 2. `$security-label` Operation
+### 2. `$security-label` - Analyze and Label Resources
 
 **Endpoint**: `POST [base]/$security-label?mode={batch|full}`
 
-**Purpose**: Analyze resources and apply security labels based on loaded ValueSets
+Analyzes clinical resources for sensitive information and applies security labels. Supports two modes:
+- `batch` (default): Returns only modified resources
+- `full`: Returns all resources, preserving Bundle structure
 
-**Input Parameters**:
-- `bundle` (Bundle, required): A FHIR Bundle containing clinical resources to analyze
-- `mode` (code, optional): Output mode - `batch` (default, modified resources only) or `full` (all resources)
-
-**Output**:
-- `Bundle`: Analyzed resources with security labels applied
-
-**OperationDefinition**: Available at `GET [base]/OperationDefinition/security-label`
-
-**Example Request**:
-```bash
-POST http://localhost:3000/$security-label?mode=full
-Content-Type: application/json
-
-{
-  "resourceType": "Bundle",
-  "type": "collection",
-  "entry": [{
-    "resource": {
-      "resourceType": "Condition",
-      ...
-    }
-  }]
-}
-```
-
-### FHIR Metadata Endpoint
+### FHIR Metadata
 
 **CapabilityStatement**: `GET [base]/metadata`
 
-Returns the server's CapabilityStatement describing supported operations, FHIR version, and capabilities.
+Returns the server's capabilities, supported operations, and FHIR version.
 
-**Example**:
-```bash
-GET http://localhost:3000/metadata
-Accept: application/fhir+json
-```
+**OperationDefinitions**: Available at:
+- `GET [base]/OperationDefinition/sls-load-valuesets`
+- `GET [base]/OperationDefinition/security-label`
 
-### Legacy REST API Endpoints
-
-For backward compatibility, the following REST endpoints are also available:
-- `POST /api/v1/valuesets` - equivalent to `$sls-load-valuesets`
-- `POST /api/v1/analyze?mode=batch` - equivalent to `$security-label?mode=batch`
-- `POST /api/v1/analyze-full` - equivalent to `$security-label?mode=full`
-
-## Additional Features that are not implemented but do have comments in the codebase:
-
-- Creating Provenance resources linking labeling actions to agents or timestamps via FHIR. This would be one Provenance added to the update Bundle, with each of the updated resources referenced in the Provenance.target; and the Provenance.entity referencing a Device that represents the SLS engine.
-- Creating AuditEvent resources to capture details of labeling actions, including who performed the action, what was acted upon, when it occurred, and where it took place.
-- Using PATCH rather than PUT for updating resources in the output Bundle, to minimize data transfer by only sending changes.
+> **For complete technical details**, including parameter specifications, database schema, and full examples, see [FHIR.md](FHIR.md)
 
 ## Getting Started
 
@@ -251,137 +189,28 @@ Static hosting with browser-based processing:
 - ✅ Complete privacy (client-side only)
 - ⚠️ URL fetching may be limited by CORS policies (use Docker deployment for unrestricted URL access)
 
-### Try the Sample Data
+### Using the Service
 
-3. **Try the Sample Data**:
-   - Click "API 1: Setup Sensitive Topics"
-   - **Option A**: Click "Load Sample ValueSet Bundle" to use built-in sample
-   - **Option B**: Enter a URL to a JSON file and click "Fetch from URL"
+> **Note**: The "Load Sample ValueSet Bundle" and "Load Sample Resource Bundle" buttons in the web interface provide comprehensive examples demonstrating multiple topics per ValueSet, cross-ValueSet matching, and other advanced features.
+
+1. **Load ValueSets** (API 1: Setup Sensitive Topics)
+   - Paste JSON directly or fetch from URL
    - Click "Process ValueSets"
-   - Switch to "API 2: Tag Clinical Resources"
-   - **Option A**: Click "Load Sample Resource Bundle" to use built-in sample
-   - **Option B**: Enter a URL to a JSON file and click "Fetch from URL"
-   - Click "Analyze & Tag Resources" (returns complete bundle with all resources) OR "Analyze into Update Bundle" (returns only modified resources)
-   - Click "Copy to Clipboard" to copy the JSON output
+   - **Note**: URL fetching in GitHub Pages may fail due to CORS restrictions
 
-**What the Sample Data Demonstrates:**
-- ValueSets with single topics (PSY, ETH)
-- ValueSets with multiple focus contexts (PSYTHPN, SUD, BH on same ValueSet)
-- Resources matching a single ValueSet
-- Resources matching multiple ValueSets (code appears in multiple ValueSets)
-- Resources matching ValueSets with multiple topics (all topics applied to the resource)
+2. **Analyze Resources** (API 2: Tag Clinical Resources)
+   - Paste a Bundle of clinical resources or fetch from URL
+   - Choose analysis mode:
+     - **"Analyze & Tag Resources"**: Complete Bundle with all resources
+     - **"Analyze into Update Bundle"**: Only modified resources
+   - Click "Copy to Clipboard" to export results
 
-### Usage Examples
+**Output includes:**
+- `meta.security` with confidentialityCode `R` and topic-specific labels
+- `meta.extension` with lastSourceSync timestamp
+- Bundle-level `meta.security` summarizing all sensitive content types
 
-> **Note**: The examples below are simplified for clarity. The "Load Sample ValueSet Bundle" and "Load Sample Resource Bundle" buttons in the SLS web interface provide more comprehensive examples that demonstrate additional features such as multiple topics per ValueSet and cross-ValueSet matching.
-
-#### API 1: Loading Sensitive Topic Definitions
-
-**Input Options:**
-- Paste JSON directly into the textarea
-- Enter a URL to a JSON file and click "Fetch from URL" to load it
-  - **Note**: In the browser/GitHub Pages version, URL fetching may fail due to CORS (Cross-Origin Resource Sharing) restrictions if the target server doesn't allow cross-origin requests. Use the Docker deployment for unrestricted URL access, or paste the JSON directly.
-
-**Example JSON (Single Topic):**
-
-```json
-{
-  "resourceType": "Bundle",
-  "type": "collection",
-  "entry": [{
-    "resource": {
-      "resourceType": "ValueSet",
-      "id": "mental-health-conditions",
-      "date": "2024-01-01T00:00:00Z",
-      "topic": [{
-        "coding": [{
-          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
-          "code": "PSY",
-          "display": "Psychiatry"
-        }]
-      }],
-      "expansion": {
-        "contains": [{
-          "system": "http://snomed.info/sct",
-          "code": "35489007",
-          "display": "Depressive disorder"
-        }]
-      }
-    }
-  }]
-}
-```
-
-**Example with Multiple Focus Contexts:**
-
-```json
-{
-  "resourceType": "ValueSet",
-  "id": "behavioral-health-multi",
-  "useContext": [
-    {
-      "code": {
-        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
-        "code": "focus"
-      },
-      "valueCodeableConcept": {
-        "coding": [{
-          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
-          "code": "PSYTHPN",
-          "display": "Psychotherapy Note"
-        }]
-      }
-    },
-    {
-      "code": {
-        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
-        "code": "focus"
-      },
-      "valueCodeableConcept": {
-        "coding": [{
-          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
-          "code": "SUD",
-          "display": "Substance Use Disorder"
-        }]
-      }
-    }
-  ],
-  "expansion": {
-    "contains": [{
-      "system": "http://snomed.info/sct",
-      "code": "74732009",
-      "display": "Mental disorder"
-    }]
-  }
-}
-```
-
-> **Note**: When a code matches this ValueSet, it will receive BOTH `PSYTHPN` and `SUD` security labels.
-
-#### API 2: Analyzing Resources
-
-The service analyzes resources and applies security labels:
-
-**Input Options:**
-- Paste JSON directly into the textarea
-- Enter a URL to a JSON file and click "Fetch from URL" to load it
-
-**Analysis Options:**
-- **"Analyze & Tag Resources"**: Returns a complete Bundle containing ALL resources from the input (preserving original Bundle.id)
-- **"Analyze into Update Bundle"**: Returns a Batch Bundle containing ONLY resources that were modified with new security labels
-
-**Copy to Clipboard**: After analysis, click the "Copy to Clipboard" button to copy the output JSON for use in other tools
-
-**Input**: Bundle with clinical resources
-
-**Output**: Bundle with:
-- Each resource's `meta.security` containing:
-  - confidentialityCode `R` (restricted) if sensitive content detected
-  - Topic-specific security labels for matched sensitive categories
-  - `meta.extension` with lastSourceSync timestamp
-- Bundle's `meta.security` containing:
-  - Distinct (deduplicated) security labels from all resources
-  - Provides at-a-glance summary of sensitive content types in the bundle
+> **For detailed JSON examples and complete API documentation**, see [FHIR.md](FHIR.md)
 
 ## Project Structure
 
@@ -453,17 +282,17 @@ sls-ri/
 │       Docker Container              │
 ├─────────────────────────────────────┤
 │  Express.js Server (Port 3000)      │
-│    ├─ REST API (/api/v1/...)       │
+│    ├─ FHIR Operations             │
 │    ├─ Static Frontend Files        │
 │    └─ SQLite Database (Volume)     │
 └─────────────────────────────────────┘
          ↑
-         │ HTTP/REST
+         │ HTTP/FHIR
          ↓
 ┌─────────────────────────────────────┐
 │      Client Browser                 │
 │  ├─ UI (HTML/CSS/JS)               │
-│  └─ Fetch API calls                │
+│  └─ FHIR Operations calls          │
 └─────────────────────────────────────┘
 ```
 

@@ -2,6 +2,8 @@
 
 This document describes the FHIR conformance resources for the Security Labeling Service.
 
+These FHIR definitions are available in [SHIFT SLS-RI Implementation Guide](https://build.fhir.org/ig/SHIFT-Task-Force/sls-ri-ig/branches/main/index.html)
+
 ## CapabilityStatement
 
 The CapabilityStatement describes the server's capabilities, supported operations, and FHIR version.

@@ -98,23 +98,11 @@ async function processValueSets() {
     }
 }
 
-// Clear ValueSets
+// Clear ValueSets - Not implemented in FHIR operations
 async function clearValueSets() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/data`, {
-            method: 'DELETE'
-        });
-        
-        const result = await response.json();
-        const output = document.getElementById('valuesetOutput');
-        output.textContent = '✓ All data cleared successfully.\n\n' + (result.message || 'All ValueSets and rules have been cleared.');
-        output.className = 'output success';
-        
-    } catch (error) {
-        const output = document.getElementById('valuesetOutput');
-        output.textContent = `✗ Error clearing data: ${error.message}`;
-        output.className = 'output error';
-    }
+    const output = document.getElementById('valuesetOutput');
+    output.textContent = 'Note: Clear functionality requires server restart to reset the database.\nStop and restart the Docker container to clear all data.';
+    output.className = 'output warning';
 }
 
 // Fetch Resource Bundle from URL
@@ -329,62 +317,21 @@ async function copyAnalysisOutput() {
     }
 }
 
-// Refresh Status Display
+// Refresh Status Display - Not implemented in FHIR operations
 async function refreshStatus() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/status`);
-        const status = await response.json();
-        
-        // ValueSet Status
-        const vsStatus = document.getElementById('valuesetStatus');
-        if (!status.valueSets || status.valueSets.length === 0) {
-            vsStatus.innerHTML = '<p class="warning">No ValueSets loaded. Use API 1 to load ValueSets.</p>';
-        } else {
-            let html = `<p><strong>Total ValueSets:</strong> ${status.valueSets.length}</p>`;
-            html += `<p><strong>Earliest Date:</strong> ${status.earliestDate || 'N/A'}</p>`;
-            html += '<ul>';
-            status.valueSets.forEach(vs => {
-                html += `<li><strong>${vs.id}</strong> (${vs.date || 'No date'})</li>`;
-            });
-            html += '</ul>';
-            vsStatus.innerHTML = html;
-        }
-        
-        // Rules Status
-        const rulesStatus = document.getElementById('rulesStatus');
-        if (!status.rulesCount || status.rulesCount === 0) {
-            rulesStatus.innerHTML = '<p class="warning">No rules loaded. Process ValueSets first.</p>';
-        } else {
-            let html = `<p><strong>Total Codes:</strong> ${status.rulesCount}</p>`;
-            rulesStatus.innerHTML = html;
-        }
-        
-        // Statistics
-        const statsStatus = document.getElementById('statsStatus');
-        if (status.stats) {
-            let html = `<ul>`;
-            html += `<li><strong>ValueSets Processed:</strong> ${status.stats.totalValueSetsProcessed || 0}</li>`;
-            html += `<li><strong>Resources Analyzed:</strong> ${status.stats.totalResourcesAnalyzed || 0}</li>`;
-            html += `<li><strong>Resources Labeled:</strong> ${status.stats.totalResourcesLabeled || 0}</li>`;
-            html += `<li><strong>Resources Skipped:</strong> ${status.stats.totalResourcesSkipped || 0}</li>`;
-            html += `</ul>`;
-            statsStatus.innerHTML = html;
-        }
-        
-    } catch (error) {
-        console.error('Error refreshing status:', error);
-        const errorMsg = '<p class="error">✗ Failed to refresh status. Is the server running?</p>';
-        document.getElementById('valuesetStatus').innerHTML = errorMsg;
-        document.getElementById('rulesStatus').innerHTML = errorMsg;
-        document.getElementById('statsStatus').innerHTML = errorMsg;
-    }
+    const infoMsg = '<p class="info">Status dashboard not available. This reference implementation focuses on FHIR operations only.<br>Check the output from processing ValueSets and analyzing resources for details.</p>';
+    document.getElementById('valuesetStatus').innerHTML = infoMsg;
+    document.getElementById('rulesStatus').innerHTML = infoMsg;
+    document.getElementById('statsStatus').innerHTML = infoMsg;
 }
 
-// Export Data (note: export from backend DB)
+// Export Data - Not implemented in FHIR operations
 async function exportData() {
+    alert('Export functionality not available. This reference implementation focuses on FHIR operations only.');
+    return;
     try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/status`);
-        const data = await response.json();
+        const response = null; // Disabled
+        const data = {};
         
         const exportData = {
             ...data,

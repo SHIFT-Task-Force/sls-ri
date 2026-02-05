@@ -174,124 +174,6 @@ app.post('/$security-label', (req, res) => {
     }
 });
 
-// Legacy API 1: Process ValueSet Bundle (for backward compatibility)
-app.post('/api/v1/valuesets', async (req, res) => {
-    try {
-        const bundle = req.body;
-        
-        if (!bundle) {
-            return res.status(400).json({
-                error: 'Request body is required'
-            });
-        }
-
-        const outcome = await slsService.processValueSetBundle(bundle);
-        
-        // Check if operation was successful
-        const isError = outcome.issue[0].severity === 'error';
-        const statusCode = isError ? 400 : 200;
-        
-        res.status(statusCode).json(outcome);
-        
-    } catch (error) {
-        console.error('Error processing ValueSets:', error);
-        res.status(500).json({
-            resourceType: 'OperationOutcome',
-            issue: [{
-                severity: 'error',
-                code: 'exception',
-                diagnostics: `Server error: ${error.message}`
-            }]
-        });
-    }
-});
-
-// API 2: Analyze and Tag Resources
-app.post('/api/v1/analyze', (req, res) => {
-    try {
-        const bundle = req.body;
-        
-        if (!bundle) {
-            return res.status(400).json({
-                error: 'Request body is required'
-            });
-        }
-
-        const batchBundle = slsService.analyzeResourceBundle(bundle);
-        
-        res.status(200).json(batchBundle);
-        
-    } catch (error) {
-        console.error('Error analyzing resources:', error);
-        res.status(400).json({
-            resourceType: 'OperationOutcome',
-            issue: [{
-                severity: 'error',
-                code: 'processing',
-                diagnostics: error.message
-            }]
-        });
-    }
-});
-
-// API 2 Variant: Analyze and Tag Resources - Return Full Bundle
-app.post('/api/v1/analyze-full', (req, res) => {
-    try {
-        const bundle = req.body;
-        
-        if (!bundle) {
-            return res.status(400).json({
-                error: 'Request body is required'
-            });
-        }
-
-        const fullBundle = slsService.analyzeResourceBundleFull(bundle);
-        
-        res.status(200).json(fullBundle);
-        
-    } catch (error) {
-        console.error('Error analyzing resources (full bundle):', error);
-        res.status(400).json({
-            resourceType: 'OperationOutcome',
-            issue: [{
-                severity: 'error',
-                code: 'processing',
-                diagnostics: error.message
-            }]
-        });
-    }
-});
-
-// Get system status
-app.get('/api/v1/status', (req, res) => {
-    try {
-        const status = slsService.getStatus();
-        res.json(status);
-    } catch (error) {
-        console.error('Error getting status:', error);
-        res.status(500).json({
-            error: 'Failed to get status',
-            message: error.message
-        });
-    }
-});
-
-// Clear all data
-app.delete('/api/v1/data', (req, res) => {
-    try {
-        slsService.clearAllData();
-        res.json({
-            message: 'All data cleared successfully'
-        });
-    } catch (error) {
-        console.error('Error clearing data:', error);
-        res.status(500).json({
-            error: 'Failed to clear data',
-            message: error.message
-        });
-    }
-});
-
 // Serve static frontend files (supports both local dev and Docker)
 const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '..', 'frontend');
 app.use(express.static(frontendPath));
@@ -330,7 +212,7 @@ app.listen(PORT, () => {
     console.log('=================================');
     console.log(`Server: http://localhost:${PORT}`);
     console.log(`Health: http://localhost:${PORT}/health`);
-    console.log(`API v1: http://localhost:${PORT}/api/v1`);
+    console.log(`Metadata: http://localhost:${PORT}/metadata`);
     console.log('=================================');
 });
 

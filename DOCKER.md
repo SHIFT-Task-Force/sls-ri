@@ -71,54 +71,57 @@ Open your browser to: **http://localhost:3000**
 │         Docker Container            │
 ├─────────────────────────────────────┤
 │  Node.js/Express Server (Port 3000) │
-│    ├─ API Endpoints (/api/v1/...)  │
+│    ├─ FHIR Operations             │
 │    ├─ Static Frontend Files        │
 │    └─ SQLite Database (Volume)     │
 └─────────────────────────────────────┘
          ↑
-         │ HTTP
+         │ HTTP/FHIR
          ↓
     Your Browser
 ```
 
-## API Endpoints
+## FHIR Operations
 
 ### Base URL
 ```
 http://localhost:3000
 ```
 
-### Endpoints
+### Operations
 
-#### Health Check
+#### CapabilityStatement (Metadata)
 ```bash
-GET /health
+GET /metadata
+Accept: application/fhir+json
 ```
 
-#### API 1: Process ValueSets
+#### OperationDefinitions
 ```bash
-POST /api/v1/valuesets
-Content-Type: application/json
+GET /OperationDefinition/sls-load-valuesets
+GET /OperationDefinition/security-label
+```
+
+#### Load ValueSets ($sls-load-valuesets)
+```bash
+POST /$sls-load-valuesets
+Content-Type: application/fhir+json
 
 # Body: FHIR Bundle with ValueSet resources
 ```
 
-#### API 2: Analyze Resources
+#### Analyze Resources ($security-label)
 ```bash
-POST /api/v1/analyze
-Content-Type: application/json
+POST /$security-label?mode=batch
+Content-Type: application/fhir+json
 
 # Body: FHIR Bundle with clinical resources
+# mode parameter: batch (default) or full
 ```
 
-#### Get Status
+#### Health Check
 ```bash
-GET /api/v1/status
-```
-
-#### Clear Data
-```bash
-DELETE /api/v1/data
+GET /health
 ```
 
 ## Docker Commands
@@ -359,25 +362,25 @@ docker stats fhir-sls-backend
 # Increase resources in Docker Desktop settings
 ```
 
-## Testing the API with curl
+## Testing with curl
 
-### Process ValueSets
+### Load ValueSets
 ```bash
-curl -X POST http://localhost:3000/api/v1/valuesets \
-  -H "Content-Type: application/json" \
+curl -X POST http://localhost:3000/\$sls-load-valuesets \
+  -H "Content-Type: application/fhir+json" \
   -d @sample-valuesets.json
 ```
 
 ### Analyze Resources
 ```bash
-curl -X POST http://localhost:3000/api/v1/analyze \
-  -H "Content-Type: application/json" \
+curl -X POST http://localhost:3000/\$security-label?mode=full \
+  -H "Content-Type: application/fhir+json" \
   -d @sample-resources.json
 ```
 
-### Get Status
+### Get Metadata
 ```bash
-curl http://localhost:3000/api/v1/status | jq
+curl http://localhost:3000/metadata | jq
 ```
 
 ## Monitoring

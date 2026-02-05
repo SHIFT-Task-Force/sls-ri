@@ -31,9 +31,6 @@
     "application/fhir+json",
     "json"
   ],
-  "implementationGuide": [
-    "http://hl7.org/fhir/us/core/ImplementationGuide/hl7.fhir.us.core"
-  ],
   "rest": [
     {
       "mode": "server",
