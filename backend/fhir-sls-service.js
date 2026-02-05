@@ -597,11 +597,14 @@ class FHIRSecurityLabelingService {
         const rows = this.db.prepare('SELECT * FROM rules').all();
         const rules = {};
         for (const row of rows) {
-            rules[row.code_key] = {
+            if (!rules[row.code_key]) {
+                rules[row.code_key] = [];
+            }
+            rules[row.code_key].push({
                 code: row.topic_code,
                 system: row.topic_system,
                 display: row.topic_display
-            };
+            });
         }
         return rules;
     }
@@ -646,7 +649,10 @@ class FHIRSecurityLabelingService {
         if (obj.system && obj.code) {
             const key = `${obj.system}|${obj.code}`;
             if (rules[key]) {
-                matchedTopics.add(JSON.stringify(rules[key]));
+                // Add all topics for this code
+                for (const topic of rules[key]) {
+                    matchedTopics.add(JSON.stringify(topic));
+                }
             }
         }
 

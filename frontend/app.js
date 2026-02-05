@@ -498,6 +498,85 @@ function loadSampleValueSet() {
                                 "system": "http://snomed.info/sct",
                                 "code": "191820008",
                                 "display": "Drug abuse"
+                            },
+                            {
+                                "system": "http://snomed.info/sct",
+                                "code": "66214007",
+                                "display": "Substance abuse (disorder)"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "resource": {
+                    "resourceType": "ValueSet",
+                    "id": "behavioral-health-multi-topic",
+                    "url": "http://example.org/fhir/ValueSet/behavioral-health-multi-topic",
+                    "version": "1.0.0",
+                    "name": "BehavioralHealthMultiTopic",
+                    "title": "Behavioral Health - Multiple Topics",
+                    "status": "active",
+                    "date": "2024-01-01T00:00:00Z",
+                    "useContext": [
+                        {
+                            "code": {
+                                "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+                                "code": "focus"
+                            },
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                                        "code": "PSYTHPN",
+                                        "display": "Psychotherapy Note"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "code": {
+                                "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+                                "code": "focus"
+                            },
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                                        "code": "SUD",
+                                        "display": "Substance Use Disorder"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "code": {
+                                "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+                                "code": "focus"
+                            },
+                            "valueCodeableConcept": {
+                                "coding": [
+                                    {
+                                        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                                        "code": "BH",
+                                        "display": "Behavioral Health"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "expansion": {
+                        "timestamp": "2024-01-01T00:00:00Z",
+                        "contains": [
+                            {
+                                "system": "http://snomed.info/sct",
+                                "code": "66214007",
+                                "display": "Substance abuse (disorder)"
+                            },
+                            {
+                                "system": "http://snomed.info/sct",
+                                "code": "74732009",
+                                "display": "Mental disorder"
                             }
                         ]
                     }
@@ -533,7 +612,8 @@ function loadSampleResources() {
                                 "code": "35489007",
                                 "display": "Depressive disorder"
                             }
-                        ]
+                        ],
+                        "text": "Matches only mental-health-conditions ValueSet (PSY)"
                     },
                     "subject": {
                         "reference": "Patient/example"
@@ -556,10 +636,65 @@ function loadSampleResources() {
                         "coding": [
                             {
                                 "system": "http://snomed.info/sct",
+                                "code": "66214007",
+                                "display": "Substance abuse (disorder)"
+                            }
+                        ],
+                        "text": "Matches TWO ValueSets: substance-abuse (ETH) AND behavioral-health-multi-topic (PSYTHPN, SUD, BH)"
+                    },
+                    "subject": {
+                        "reference": "Patient/example"
+                    }
+                }
+            },
+            {
+                "resource": {
+                    "resourceType": "Condition",
+                    "id": "condition-3",
+                    "clinicalStatus": {
+                        "coding": [
+                            {
+                                "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                                "code": "active"
+                            }
+                        ]
+                    },
+                    "code": {
+                        "coding": [
+                            {
+                                "system": "http://snomed.info/sct",
+                                "code": "74732009",
+                                "display": "Mental disorder"
+                            }
+                        ],
+                        "text": "Matches behavioral-health-multi-topic with MULTIPLE topics (PSYTHPN, SUD, BH)"
+                    },
+                    "subject": {
+                        "reference": "Patient/example"
+                    }
+                }
+            },
+            {
+                "resource": {
+                    "resourceType": "Condition",
+                    "id": "condition-4",
+                    "clinicalStatus": {
+                        "coding": [
+                            {
+                                "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                                "code": "active"
+                            }
+                        ]
+                    },
+                    "code": {
+                        "coding": [
+                            {
+                                "system": "http://snomed.info/sct",
                                 "code": "38341003",
                                 "display": "Hypertension"
                             }
-                        ]
+                        ],
+                        "text": "Does NOT match any ValueSet - not sensitive"
                     },
                     "subject": {
                         "reference": "Patient/example"
@@ -586,6 +721,27 @@ function loadSampleResources() {
                     "valueQuantity": {
                         "value": 80,
                         "unit": "beats/minute"
+                    }
+                }
+            },
+            {
+                "resource": {
+                    "resourceType": "MedicationRequest",
+                    "id": "med-1",
+                    "status": "active",
+                    "intent": "order",
+                    "medicationCodeableConcept": {
+                        "coding": [
+                            {
+                                "system": "http://snomed.info/sct",
+                                "code": "191816009",
+                                "display": "Alcohol abuse"
+                            }
+                        ],
+                        "text": "Matches substance-abuse ValueSet (ETH)"
+                    },
+                    "subject": {
+                        "reference": "Patient/example"
                     }
                 }
             }

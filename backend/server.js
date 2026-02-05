@@ -163,12 +163,13 @@ app.delete('/api/v1/data', (req, res) => {
     }
 });
 
-// Serve static frontend files from the parent directory
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
+// Serve static frontend files (supports both local dev and Docker)
+const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '..', 'frontend');
+app.use(express.static(frontendPath));
 
 // Catch-all route for SPA
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+    res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // Error handling middleware

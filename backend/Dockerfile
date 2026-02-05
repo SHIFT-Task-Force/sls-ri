@@ -3,14 +3,17 @@ FROM node:18-alpine
 # Create app directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy backend package files
+COPY backend/package*.json ./
 
 # Install dependencies
 RUN npm install --only=production
 
-# Copy application code
-COPY . .
+# Copy backend application code
+COPY backend/ .
+
+# Copy frontend files
+COPY frontend/ ./frontend/
 
 # Create data directory for SQLite database
 RUN mkdir -p /app/data
@@ -22,6 +25,7 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV DB_PATH=/app/data/sls.db
+ENV FRONTEND_PATH=/app/frontend
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \

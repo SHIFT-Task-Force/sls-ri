@@ -3,8 +3,8 @@ version: '3.8'
 services:
   sls-backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./backend/Dockerfile
     container_name: fhir-sls-backend
     ports:
       - "3000:3000"
@@ -12,11 +12,10 @@ services:
       - NODE_ENV=production
       - PORT=3000
       - DB_PATH=/app/data/sls.db
+      - FRONTEND_PATH=/app/frontend
     volumes:
       # Persist database
       - sls-data:/app/data
-      # Mount frontend files
-      - ./frontend:/app/frontend:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {if(r.statusCode !== 200) throw new Error('Health check failed')})"]
