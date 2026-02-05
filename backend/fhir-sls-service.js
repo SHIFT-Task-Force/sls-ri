@@ -301,8 +301,8 @@ class FHIRSecurityLabelingService {
         }
 
         // Check for topic in either topic element or useContext with focus
-        const topicCoding = this.extractTopicCoding(resource);
-        if (!topicCoding) {
+        const topicCodings = this.extractTopicCodings(resource);
+        if (topicCodings.length === 0) {
             errors.push(`ValueSet ${resource.id || 'unknown'} missing topic: must have either topic[0].coding[0] or useContext with code=focus`);
         }
 
@@ -315,31 +315,36 @@ class FHIRSecurityLabelingService {
     }
 
     /**
-     * Extract topic coding from either topic element or useContext
+     * Extract all topic codings from either topic element or useContext (supports multiple focus contexts)
      */
-    extractTopicCoding(resource) {
+    extractTopicCodings(resource) {
+        const topicCodings = [];
+
         // Try topic element first
         if (resource.topic && resource.topic.length > 0) {
             const topicCoding = resource.topic[0].coding ? resource.topic[0].coding[0] : null;
             if (topicCoding && topicCoding.code) {
-                return topicCoding;
+                topicCodings.push(topicCoding);
             }
         }
 
-        // Try useContext with focus
+        // Try ALL useContext with focus (not just the first one)
         if (resource.useContext && resource.useContext.length > 0) {
-            const focusContext = resource.useContext.find(
-                ctx => ctx.code && ctx.code.code === 'focus'
-            );
-            if (focusContext && focusContext.valueCodeableConcept && focusContext.valueCodeableConcept.coding) {
-                const coding = focusContext.valueCodeableConcept.coding[0];
-                if (coding && coding.code) {
-                    return coding;
+            for (const ctx of resource.useContext) {
+                if (ctx.code && ctx.code.code === 'focus') {
+                    if (ctx.valueCodeableConcept && ctx.valueCodeableConcept.coding) {
+                        // Get all codings from this focus context
+                        for (const coding of ctx.valueCodeableConcept.coding) {
+                            if (coding && coding.code) {
+                                topicCodings.push(coding);
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        return null;
+        return topicCodings;
     }
 
     /**
@@ -372,19 +377,23 @@ class FHIRSecurityLabelingService {
         );
 
         for (const vs of valueSets) {
-            const topicCoding = this.extractTopicCoding(vs);
-            if (!topicCoding) continue; // Should not happen if validation passed
+            const topicCodings = this.extractTopicCodings(vs);
+            if (topicCodings.length === 0) continue; // Should not happen if validation passed
 
-            const topicCode = topicCoding.code;
-            const topicSystem = topicCoding.system;
-            const topicDisplay = topicCoding.display || topicCode;
+            // Process each topic coding - if there are multiple focus contexts,
+            // all codes in the expansion will be associated with all topics
+            for (const topicCoding of topicCodings) {
+                const topicCode = topicCoding.code;
+                const topicSystem = topicCoding.system;
+                const topicDisplay = topicCoding.display || topicCode;
 
-            if (vs.expansion && vs.expansion.contains) {
-                this.extractCodesFromExpansion(
-                    vs.expansion.contains,
-                    insertStmt,
-                    { code: topicCode, system: topicSystem, display: topicDisplay }
-                );
+                if (vs.expansion && vs.expansion.contains) {
+                    this.extractCodesFromExpansion(
+                        vs.expansion.contains,
+                        insertStmt,
+                        { code: topicCode, system: topicSystem, display: topicDisplay }
+                    );
+                }
             }
         }
     }
