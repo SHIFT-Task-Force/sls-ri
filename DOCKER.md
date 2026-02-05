@@ -119,6 +119,18 @@ Content-Type: application/fhir+json
 # mode parameter: batch (default) or full
 ```
 
+#### Status Dashboard
+View system status, loaded ValueSets, and processing statistics:
+```bash
+# JSON endpoint
+GET /status
+
+# HTML dashboard (view in browser)
+GET /status.html
+```
+
+Open in browser: **http://localhost:3000/status.html**
+
 #### Health Check
 ```bash
 GET /health

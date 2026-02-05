@@ -153,6 +153,11 @@ docker-compose up -d
 # Access at http://localhost:3000
 ```
 
+**Access Points:**
+- **Main Interface**: http://localhost:3000
+- **Status Dashboard**: http://localhost:3000/status.html
+- **FHIR Metadata**: http://localhost:3000/metadata
+
 See [DOCKER.md](DOCKER.md) for complete Docker deployment guide.
 
 **Features:**

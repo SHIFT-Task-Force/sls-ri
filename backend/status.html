@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLS Server Status</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .status-card h2 {
+            color: #2d3748;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-card h2::before {
+            content: "📊";
+            font-size: 1.2em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-label {
+            color: #718096;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #2d3748;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .valueset-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .valueset-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .valueset-item:last-child {
+            border-bottom: none;
+        }
+
+        .valueset-item:hover {
+            background: #f7fafc;
+        }
+
+        .valueset-id {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .valueset-date {
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+
+        .error {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #c53030;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #718096;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #f7fafc;
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 FHIR Security Labeling Service</h1>
+            <p>Server Status Dashboard</p>
+        </div>
+
+        <div class="content">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button class="refresh-btn" onclick="loadStatus()">
+                    <span>🔄</span>
+                    <span>Refresh Status</span>
+                </button>
+            </div>
+
+            <div id="statusContent">
+                <div class="loading">Loading status...</div>
+            </div>
+
+            <div class="last-updated" id="lastUpdated"></div>
+        </div>
+
+        <div class="footer">
+            <p>FHIR Security Labeling Service Reference Implementation</p>
+            <p><a href="/">← Back to Main Interface</a> | <a href="/metadata">View CapabilityStatement</a></p>
+        </div>
+    </div>
+
+    <script>
+        async function loadStatus() {
+            const statusContent = document.getElementById('statusContent');
+            const lastUpdated = document.getElementById('lastUpdated');
+
+            try {
+                statusContent.innerHTML = '<div class="loading">Loading status...</div>';
+
+                const response = await fetch('/status');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                let html = '';
+
+                // Overview Card
+                html += `
+                    <div class="status-card">
+                        <h2>System Overview</h2>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Loaded ValueSets</div>
+                                <div class="info-value">${data.valueSets?.length || 0}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Security Rules</div>
+                                <div class="info-value">${data.rulesCount || 0}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Earliest ValueSet Date</div>
+                                <div class="info-value" style="font-size: 1em;">${data.earliestDate || 'N/A'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Statistics Card
+                if (data.stats) {
+                    html += `
+                        <div class="status-card">
+                            <h2>Processing Statistics</h2>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">ValueSets Processed</div>
+                                    <div class="info-value">${data.stats.totalValueSetsProcessed || 0}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Resources Analyzed</div>
+                                    <div class="info-value">${data.stats.totalResourcesAnalyzed || 0}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Resources Labeled</div>
+                                    <div class="info-value">${data.stats.totalResourcesLabeled || 0}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Resources Skipped</div>
+                                    <div class="info-value">${data.stats.totalResourcesSkipped || 0}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // ValueSets Card
+                if (data.valueSets && data.valueSets.length > 0) {
+                    html += `
+                        <div class="status-card">
+                            <h2>Loaded ValueSets</h2>
+                            <div class="valueset-list">
+                    `;
+
+                    data.valueSets.forEach(vs => {
+                        html += `
+                            <div class="valueset-item">
+                                <span class="valueset-id">${vs.id}</span>
+                                <span class="valueset-date">${vs.date || 'No date'}</span>
+                            </div>
+                        `;
+                    });
+
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="status-card">
+                            <h2>Loaded ValueSets</h2>
+                            <p style="color: #718096; padding: 20px; text-align: center;">
+                                No ValueSets loaded yet. Use the main interface to load ValueSets.
+                            </p>
+                        </div>
+                    `;
+                }
+
+                statusContent.innerHTML = html;
+                lastUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
+
+            } catch (error) {
+                statusContent.innerHTML = `
+                    <div class="error">
+                        <strong>Error loading status:</strong> ${error.message}
+                    </div>
+                `;
+                lastUpdated.textContent = '';
+            }
+        }
+
+        // Load status on page load
+        loadStatus();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadStatus, 30000);
+    </script>
+</body>
+</html>

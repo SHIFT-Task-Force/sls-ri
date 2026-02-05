@@ -174,6 +174,30 @@ app.post('/\\$sls-tag', (req, res) => {
     }
 });
 
+// Status endpoint (JSON)
+app.get('/status', (req, res) => {
+    try {
+        const status = slsService.getStatus();
+        res.json(status);
+    } catch (error) {
+        console.error('Error getting status:', error);
+        res.status(500).json({
+            error: 'Failed to retrieve status',
+            message: error.message
+        });
+    }
+});
+
+// Status page (HTML)
+app.get('/status.html', (req, res) => {
+    try {
+        res.sendFile(path.join(__dirname, 'status.html'));
+    } catch (error) {
+        console.error('Error serving status page:', error);
+        res.status(500).send('Error loading status page');
+    }
+});
+
 // Serve static frontend files (supports both local dev and Docker)
 const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '..', 'frontend');
 app.use(express.static(frontendPath));
