@@ -135,8 +135,8 @@ app.post('/$sls-load-valuesets', async (req, res) => {
     }
 });
 
-// FHIR Operation: $security-label
-app.post('/$security-label', (req, res) => {
+// FHIR Operation: $sls-tag
+app.post('/$sls-tag', (req, res) => {
     try {
         const bundle = req.body;
         const mode = req.query.mode || 'batch';

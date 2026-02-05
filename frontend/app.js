@@ -157,7 +157,7 @@ async function analyzeResourcesFull() {
         output.className = 'output';
         outputTitle.textContent = 'Bundle Result:';
         
-        const response = await fetch(`${API_BASE_URL}/$security-label?mode=full`, {
+        const response = await fetch(`${API_BASE_URL}/$sls-tag?mode=full`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -220,7 +220,7 @@ async function analyzeResources() {
         output.className = 'output';
         outputTitle.textContent = 'Bundle Result:';
         
-        const response = await fetch(`${API_BASE_URL}/$security-label?mode=batch`, {
+        const response = await fetch(`${API_BASE_URL}/$sls-tag?mode=batch`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

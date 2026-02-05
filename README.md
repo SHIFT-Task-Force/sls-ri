@@ -112,9 +112,9 @@ This service implements two FHIR operations following the [FHIR R4 Operations Fr
 
 Loads and processes ValueSet resources to establish security labeling rules. Accepts a Bundle of ValueSets and returns an OperationOutcome.
 
-### 2. `$security-label` - Analyze and Label Resources
+### 2. `$sls-tag` - Analyze and Label Resources
 
-**Endpoint**: `POST [base]/$security-label?mode={batch|full}`
+**Endpoint**: `POST [base]/$sls-tag?mode={batch|full}`
 
 Analyzes clinical resources for sensitive information and applies security labels. Supports two modes:
 - `batch` (default): Returns only modified resources
@@ -128,7 +128,7 @@ Returns the server's capabilities, supported operations, and FHIR version.
 
 **OperationDefinitions**: Available at:
 - `GET [base]/OperationDefinition/sls-load-valuesets`
-- `GET [base]/OperationDefinition/security-label`
+- `GET [base]/OperationDefinition/sls-tag`
 
 > **For complete technical details**, including parameter specifications, database schema, and full examples, see [FHIR.md](FHIR.md)
 
@@ -223,7 +223,7 @@ sls-ri/
 │   ├── Dockerfile                               # Backend container config
 │   ├── CapabilityStatement-fhir-sls-server.json # FHIR server capabilities
 │   ├── OperationDefinition-sls-load-valuesets.json
-│   └── OperationDefinition-security-label.json
+│   └── OperationDefinition-sls-tag.json
 ├── frontend/               # Frontend UI
 │   ├── index.html         # Main application interface
 │   ├── app.js             # UI logic (backend API calls)

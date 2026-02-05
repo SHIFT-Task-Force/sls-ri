@@ -60,17 +60,17 @@ Processes ValueSet resources to establish security labeling rules.
 
 **Multiple Topics Support**: When a ValueSet has multiple focus contexts, all topic codes are extracted and associated with the expansion codes. This allows a single code to trigger multiple security labels.
 
-### 2. $security-label
+### 2. $sls-tag
 
 Analyzes resources for sensitive information and applies security labels.
 
-**Resource ID**: `security-label`
+**Resource ID**: `sls-tag`
 
-**URL**: `http://SHIFT-Task-Force.github.io/sls-ri/OperationDefinition/security-label`
+**URL**: `http://SHIFT-Task-Force.github.io/sls-ri/OperationDefinition/sls-tag`
 
-**Access**: `GET [base]/OperationDefinition/security-label`
+**Access**: `GET [base]/OperationDefinition/sls-tag`
 
-**Operation Endpoint**: `POST [base]/$security-label?mode={batch|full}`
+**Operation Endpoint**: `POST [base]/$sls-tag?mode={batch|full}`
 
 **Attributes**:
 - **Kind**: operation
@@ -108,7 +108,7 @@ Analyzes resources for sensitive information and applies security labels.
 
 ### Supported Resource Types for Analysis
 
-The `$security-label` operation supports the following FHIR resource types (from US Core / USCDI v4):
+The `$sls-tag` operation supports the following FHIR resource types (from US Core / USCDI v4):
 
 - AllergyIntolerance
 - Condition
@@ -266,7 +266,7 @@ Content-Type: application/fhir+json
 #### Step 3: Analyze Resources
 
 ```bash
-POST http://localhost:3000/$security-label?mode=full
+POST http://localhost:3000/$sls-tag?mode=full
 Content-Type: application/fhir+json
 
 {
@@ -371,7 +371,7 @@ You can test the operations using:
 
 - **CapabilityStatement**: `backend/CapabilityStatement-fhir-sls-server.json`
 - **OperationDefinition ($sls-load-valuesets)**: `backend/OperationDefinition-sls-load-valuesets.json`
-- **OperationDefinition ($security-label)**: `backend/OperationDefinition-security-label.json`
+- **OperationDefinition ($sls-tag)**: `backend/OperationDefinition-sls-tag.json`
 - **Server Implementation**: `backend/server.js`
 - **Core Service Logic**: `backend/fhir-sls-service.js`
 
@@ -379,7 +379,7 @@ You can test the operations using:
 
 - **v1.0.0** (2026-02-05): Initial release with FHIR operations support
   - `$sls-load-valuesets` operation
-  - `$security-label` operation with batch/full modes
+  - `$sls-tag` operation with batch/full modes
   - CapabilityStatement and OperationDefinitions
   - Multiple topics per ValueSet support
   - Composite primary key database schema

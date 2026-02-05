@@ -99,7 +99,7 @@ Accept: application/fhir+json
 #### OperationDefinitions
 ```bash
 GET /OperationDefinition/sls-load-valuesets
-GET /OperationDefinition/security-label
+GET /OperationDefinition/sls-tag
 ```
 
 #### Load ValueSets ($sls-load-valuesets)
@@ -110,9 +110,9 @@ Content-Type: application/fhir+json
 # Body: FHIR Bundle with ValueSet resources
 ```
 
-#### Analyze Resources ($security-label)
+#### Analyze Resources ($sls-tag)
 ```bash
-POST /$security-label?mode=batch
+POST /$sls-tag?mode=batch
 Content-Type: application/fhir+json
 
 # Body: FHIR Bundle with clinical resources
@@ -373,7 +373,7 @@ curl -X POST http://localhost:3000/\$sls-load-valuesets \
 
 ### Analyze Resources
 ```bash
-curl -X POST http://localhost:3000/\$security-label?mode=full \
+curl -X POST http://localhost:3000/\$sls-tag?mode=full \
   -H "Content-Type: application/fhir+json" \
   -d @sample-resources.json
 ```

@@ -46,8 +46,8 @@
           "documentation": "Processes a Bundle containing ValueSet resources to establish security labeling rules. Supports ValueSets with multiple topic codes via topic[] or useContext[].focus. If a ValueSet lacks an expansion, it will be expanded using tx.fhir.org."
         },
         {
-          "name": "security-label",
-          "definition": "http://SHIFT-Task-Force.github.io/sls-ri/OperationDefinition/security-label",
+          "name": "sls-tag",
+          "definition": "http://SHIFT-Task-Force.github.io/sls-ri/OperationDefinition/sls-tag",
           "documentation": "Analyzes a Bundle of clinical resources and applies security labels based on loaded ValueSets. Supports two modes: 'batch' (modified resources only) and 'full' (all resources, preserving Bundle structure). Applies confidentiality code 'R' and topic-specific labels to matching resources."
         }
       ]
