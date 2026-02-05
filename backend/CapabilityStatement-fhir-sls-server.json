@@ -1,0 +1,59 @@
+{
+  "resourceType": "CapabilityStatement",
+  "id": "fhir-sls-server",
+  "url": "http://SHIFT-Task-Force.github.io/sls-ri/CapabilityStatement/fhir-sls-server",
+  "version": "1.0.0",
+  "name": "FHIRSecurityLabelingServiceCapabilityStatement",
+  "title": "FHIR Security Labeling Service - Server Capability Statement",
+  "status": "draft",
+  "experimental": true,
+  "date": "2026-02-05",
+  "publisher": "SHIFT Task Force",
+  "contact": [
+    {
+      "name": "SHIFT Task Force",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "https://github.com/SHIFT-Task-Force/sls-ri"
+        }
+      ]
+    }
+  ],
+  "description": "Capability Statement describing the FHIR Security Labeling Service (SLS) reference implementation. This service analyzes FHIR resources for sensitive information and applies appropriate security labels based on ValueSet-defined rules.",
+  "kind": "instance",
+  "implementation": {
+    "description": "FHIR Security Labeling Service Reference Implementation",
+    "url": "http://localhost:3000"
+  },
+  "fhirVersion": "4.0.1",
+  "format": [
+    "application/fhir+json",
+    "json"
+  ],
+  "implementationGuide": [
+    "http://hl7.org/fhir/us/core/ImplementationGuide/hl7.fhir.us.core"
+  ],
+  "rest": [
+    {
+      "mode": "server",
+      "documentation": "FHIR Security Labeling Service providing operations to process ValueSets defining sensitive topics and to analyze resources for security labeling.",
+      "security": {
+        "cors": true,
+        "description": "This is a reference implementation with CORS enabled. Production deployments should implement appropriate authentication and authorization."
+      },
+      "operation": [
+        {
+          "name": "sls-load-valuesets",
+          "definition": "http://SHIFT-Task-Force.github.io/sls-ri/OperationDefinition/sls-load-valuesets",
+          "documentation": "Processes a Bundle containing ValueSet resources to establish security labeling rules. Supports ValueSets with multiple topic codes via topic[] or useContext[].focus. If a ValueSet lacks an expansion, it will be expanded using tx.fhir.org."
+        },
+        {
+          "name": "security-label",
+          "definition": "http://SHIFT-Task-Force.github.io/sls-ri/OperationDefinition/security-label",
+          "documentation": "Analyzes a Bundle of clinical resources and applies security labels based on loaded ValueSets. Supports two modes: 'batch' (modified resources only) and 'full' (all resources, preserving Bundle structure). Applies confidentiality code 'R' and topic-specific labels to matching resources."
+        }
+      ]
+    }
+  ]
+}

@@ -74,7 +74,7 @@ async function processValueSets() {
         output.textContent = 'Processing ValueSets...';
         output.className = 'output';
         
-        const response = await fetch(`${API_BASE_URL}/api/v1/valuesets`, {
+        const response = await fetch(`${API_BASE_URL}/$sls-load-valuesets`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ async function analyzeResourcesFull() {
         output.className = 'output';
         outputTitle.textContent = 'Bundle Result:';
         
-        const response = await fetch(`${API_BASE_URL}/api/v1/analyze-full`, {
+        const response = await fetch(`${API_BASE_URL}/$security-label?mode=full`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -232,7 +232,7 @@ async function analyzeResources() {
         output.className = 'output';
         outputTitle.textContent = 'Bundle Result:';
         
-        const response = await fetch(`${API_BASE_URL}/api/v1/analyze`, {
+        const response = await fetch(`${API_BASE_URL}/$security-label?mode=batch`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -1,0 +1,39 @@
+{
+  "resourceType": "OperationDefinition",
+  "id": "sls-load-valuesets",
+  "url": "http://SHIFT-Task-Force.github.io/sls-ri/OperationDefinition/sls-load-valuesets",
+  "version": "1.0.0",
+  "name": "SLSLoadValueSets",
+  "title": "SLS Load ValueSets for Security Labeling",
+  "status": "draft",
+  "kind": "operation",
+  "date": "2026-02-05",
+  "publisher": "SHIFT Task Force",
+  "description": "Processes a Bundle containing ValueSet resources to establish security labeling rules. Each ValueSet defines codes that correspond to sensitive topics (e.g., mental health, substance abuse). The operation extracts codes from the ValueSet expansion and associates them with topic codes defined in the ValueSet.topic or ValueSet.useContext elements. Multiple topic codes per ValueSet are supported.",
+  "affectsState": true,
+  "code": "sls-load-valuesets",
+  "resource": [
+    "ValueSet"
+  ],
+  "system": true,
+  "type": false,
+  "instance": false,
+  "parameter": [
+    {
+      "name": "bundle",
+      "use": "in",
+      "min": 1,
+      "max": "1",
+      "documentation": "A FHIR Bundle (type 'collection' or 'batch') containing one or more ValueSet resources. If a ValueSet does not have an expansion, the operation will attempt to expand it using tx.fhir.org.",
+      "type": "Bundle"
+    },
+    {
+      "name": "return",
+      "use": "out",
+      "min": 1,
+      "max": "1",
+      "documentation": "An OperationOutcome indicating success or failure. Success includes the number of ValueSets processed, codes extracted, and the earliest effective date. Failure includes error details.",
+      "type": "OperationOutcome"
+    }
+  ]
+}

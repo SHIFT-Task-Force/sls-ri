@@ -48,9 +48,10 @@ This is a Web Service that has the following 2 APIs:
         - Each ValueSet the expansion will hold codes from standard terminologies (e.g., SNOMED CT, LOINC, ICD-10) that correspond to sensitive topics.
           - If no expansion is present. The tx.fhir.org public terminology server is called to expand the ValueSet and retrieve the codes. This uses the ValueSet/$expand operation, passing in the ValueSet to the valueSet parameter.
         - Extracting the sensitive codes
-        - The Sensitive topic code is indicated in either:
-            - `ValueSet.topic[0].coding[0]` element, OR
-            - `ValueSet.useContext` with `code.code = 'focus'` and the topic in `valueCodeableConcept.coding[0]`
+        - The Sensitive topic code(s) are indicated in either:
+            - `ValueSet.topic[].coding[0]` element (supports multiple topic entries), OR
+            - `ValueSet.useContext[]` with `code.code = 'focus'` and the topic in `valueCodeableConcept.coding[0]` (supports multiple focus contexts)
+        - **Multiple Topics**: A single ValueSet can have multiple topic codes (e.g., PSYTHPN, SUD, BH). All topics from all focus contexts are extracted and applied to matching codes.
     - Recording the earliest dateTime from the ValueSet.expansion.timestamp or ValueSet.date element to determine the effective date for the sensitive categories.
     - Returning an OperationOutcome indicating success or failure of the ValueSet processing.
 2. Tag a Bundle of Clinical Resources
@@ -100,6 +101,92 @@ graph LR
   style M fill:#ffcccc
   style N fill:#ccffcc
   ```
+
+## FHIR Operations
+
+This service implements two FHIR operations following the [FHIR R4 Operations Framework](http://hl7.org/fhir/R4/operations.html):
+
+### 1. `$sls-load-valuesets` Operation
+
+**Endpoint**: `POST [base]/$sls-load-valuesets`
+
+**Purpose**: Load and process ValueSet resources to establish security labeling rules
+
+**Input Parameter**:
+- `bundle` (Bundle, required): A FHIR Bundle containing one or more ValueSet resources
+
+**Output**:
+- `OperationOutcome`: Success/failure status with processing details
+
+**OperationDefinition**: Available at `GET [base]/OperationDefinition/sls-load-valuesets`
+
+**Example Request**:
+```bash
+POST http://localhost:3000/$sls-load-valuesets
+Content-Type: application/json
+
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [{
+    "resource": {
+      "resourceType": "ValueSet",
+      ...
+    }
+  }]
+}
+```
+
+### 2. `$security-label` Operation
+
+**Endpoint**: `POST [base]/$security-label?mode={batch|full}`
+
+**Purpose**: Analyze resources and apply security labels based on loaded ValueSets
+
+**Input Parameters**:
+- `bundle` (Bundle, required): A FHIR Bundle containing clinical resources to analyze
+- `mode` (code, optional): Output mode - `batch` (default, modified resources only) or `full` (all resources)
+
+**Output**:
+- `Bundle`: Analyzed resources with security labels applied
+
+**OperationDefinition**: Available at `GET [base]/OperationDefinition/security-label`
+
+**Example Request**:
+```bash
+POST http://localhost:3000/$security-label?mode=full
+Content-Type: application/json
+
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [{
+    "resource": {
+      "resourceType": "Condition",
+      ...
+    }
+  }]
+}
+```
+
+### FHIR Metadata Endpoint
+
+**CapabilityStatement**: `GET [base]/metadata`
+
+Returns the server's CapabilityStatement describing supported operations, FHIR version, and capabilities.
+
+**Example**:
+```bash
+GET http://localhost:3000/metadata
+Accept: application/fhir+json
+```
+
+### Legacy REST API Endpoints
+
+For backward compatibility, the following REST endpoints are also available:
+- `POST /api/v1/valuesets` - equivalent to `$sls-load-valuesets`
+- `POST /api/v1/analyze?mode=batch` - equivalent to `$security-label?mode=batch`
+- `POST /api/v1/analyze-full` - equivalent to `$security-label?mode=full`
 
 ## Additional Features that are not implemented but do have comments in the codebase:
 
@@ -174,7 +261,15 @@ Static hosting with browser-based processing:
    - Switch to "API 2: Tag Clinical Resources"
    - **Option A**: Click "Load Sample Resource Bundle" to use built-in sample
    - **Option B**: Enter a URL to a JSON file and click "Fetch from URL"
-   - Click "Analyze & Tag Resources"
+   - Click "Analyze & Tag Resources" (returns complete bundle with all resources) OR "Analyze into Update Bundle" (returns only modified resources)
+   - Click "Copy to Clipboard" to copy the JSON output
+
+**What the Sample Data Demonstrates:**
+- ValueSets with single topics (PSY, ETH)
+- ValueSets with multiple focus contexts (PSYTHPN, SUD, BH on same ValueSet)
+- Resources matching a single ValueSet
+- Resources matching multiple ValueSets (code appears in multiple ValueSets)
+- Resources matching ValueSets with multiple topics (all topics applied to the resource)
 
 ### Usage Examples
 
@@ -185,7 +280,7 @@ Static hosting with browser-based processing:
 - Enter a URL to a JSON file and click "Fetch from URL" to load it
   - **Note**: In the browser/GitHub Pages version, URL fetching may fail due to CORS (Cross-Origin Resource Sharing) restrictions if the target server doesn't allow cross-origin requests. Use the Docker deployment for unrestricted URL access, or paste the JSON directly.
 
-**Example JSON:**
+**Example JSON (Single Topic):**
 
 ```json
 {
@@ -215,6 +310,52 @@ Static hosting with browser-based processing:
 }
 ```
 
+**Example with Multiple Focus Contexts:**
+
+```json
+{
+  "resourceType": "ValueSet",
+  "id": "behavioral-health-multi",
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "PSYTHPN",
+          "display": "Psychotherapy Note"
+        }]
+      }
+    },
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "SUD",
+          "display": "Substance Use Disorder"
+        }]
+      }
+    }
+  ],
+  "expansion": {
+    "contains": [{
+      "system": "http://snomed.info/sct",
+      "code": "74732009",
+      "display": "Mental disorder"
+    }]
+  }
+}
+```
+
+> **Note**: When a code matches this ValueSet, it will receive BOTH `PSYTHPN` and `SUD` security labels.
+
 #### API 2: Analyzing Resources
 
 The service analyzes resources and applies security labels:
@@ -223,9 +364,15 @@ The service analyzes resources and applies security labels:
 - Paste JSON directly into the textarea
 - Enter a URL to a JSON file and click "Fetch from URL" to load it
 
+**Analysis Options:**
+- **"Analyze & Tag Resources"**: Returns a complete Bundle containing ALL resources from the input (preserving original Bundle.id)
+- **"Analyze into Update Bundle"**: Returns a Batch Bundle containing ONLY resources that were modified with new security labels
+
+**Copy to Clipboard**: After analysis, click the "Copy to Clipboard" button to copy the output JSON for use in other tools
+
 **Input**: Bundle with clinical resources
 
-**Output**: Batch Bundle with:
+**Output**: Bundle with:
 - Each resource's `meta.security` containing:
   - confidentialityCode `R` (restricted) if sensitive content detected
   - Topic-specific security labels for matched sensitive categories
@@ -238,11 +385,14 @@ The service analyzes resources and applies security labels:
 
 ```
 sls-ri/
-├── backend/                 # Backend API Service (Docker)
-│   ├── server.js           # Express API server
-│   ├── fhir-sls-service.js # Core FHIR processing engine
-│   ├── package.json        # Node.js dependencies
-│   └── Dockerfile          # Backend container config
+├── backend/                                      # Backend API Service (Docker)
+│   ├── server.js                                # Express API server
+│   ├── fhir-sls-service.js                      # Core FHIR processing engine
+│   ├── package.json                             # Node.js dependencies
+│   ├── Dockerfile                               # Backend container config
+│   ├── CapabilityStatement-fhir-sls-server.json # FHIR server capabilities
+│   ├── OperationDefinition-sls-load-valuesets.json
+│   └── OperationDefinition-security-label.json
 ├── frontend/               # Frontend UI
 │   ├── index.html         # Main application interface
 │   ├── app.js             # UI logic (backend API calls)
@@ -253,6 +403,7 @@ sls-ri/
 ├── styles.css            # Shared styling
 ├── docker-compose.yml    # Docker orchestration
 ├── README.md             # This file
+├── FHIR.md               # FHIR conformance resources documentation
 ├── DOCKER.md             # Docker deployment guide
 ├── DEPLOYMENT.md         # GitHub Pages deployment guide
 └── .dockerignore         # Docker build exclusions
@@ -345,6 +496,8 @@ sls-ri/
 ### 📊 Smart Analysis
 - Recursively searches all `code`, `coding`, and `codeableConcept` elements
 - Matches against terminology codes (SNOMED CT, LOINC, ICD-10)
+- **Multiple topics per code**: Single code can trigger multiple security labels when matching ValueSets with multiple focus contexts
+- **Cross-ValueSet matching**: Code can match multiple ValueSets, applying all relevant security labels
 - Skips resources already analyzed (via `lastSourceSync` extension)
 
 ### 💾 Data Persistence
@@ -409,11 +562,15 @@ This service can be used for:
 
 ## Standards & Specifications
 
+- [FHIR R4 Operations Framework](http://hl7.org/fhir/R4/operations.html)
 - [FHIR R4 Security Labels](http://hl7.org/fhir/R4/security-labels.html)
 - [FHIR R4 Meta Element](http://hl7.org/fhir/R4/resource.html#Meta)
+- [FHIR R4 CapabilityStatement](http://hl7.org/fhir/R4/capabilitystatement.html)
 - [US Core Implementation Guide](http://hl7.org/fhir/us/core/)
 - [HL7 Security Labeling Service](https://www.hl7.org/implement/standards/product_brief.cfm?product_id=345)
 - [USCDI v4](https://www.healthit.gov/isa/united-states-core-data-interoperability-uscdi)
+
+For detailed information about FHIR conformance resources, OperationDefinitions, and CapabilityStatement, see [FHIR.md](FHIR.md).
 
 ## License
 
@@ -462,7 +619,10 @@ This project showcases the capabilities of **GitHub Copilot (Claude Sonnet 4.5)*
 - ✨ REST API backend (Express.js)
 - ✨ SQLite database integration
 - ✨ Docker containerization
-- ✨ Frontend UI with sample data
+- ✨ Frontend UI with enhanced sample data demonstrating:
+  - Multiple topics per ValueSet (e.g., PSYTHPN, SUD, BH)
+  - Codes matching multiple ValueSets
+  - Copy-to-clipboard functionality
 - ✨ Comprehensive documentation
 
 ...was generated through AI-assisted development using GitHub Copilot powered by Anthropic's Claude Sonnet 4.5 model. This demonstrates how advanced AI models can accelerate the development of complex healthcare interoperability solutions while maintaining code quality and adherence to industry standards (FHIR R4, US Core). Directed by John Moehrke of <a href="https://MoehrkeResearch.com">Moehrke Research LLC</a>.
