@@ -36,11 +36,12 @@ class FHIRSecurityLabelingService {
             );
 
             CREATE TABLE IF NOT EXISTS rules (
-                code_key TEXT PRIMARY KEY,
+                code_key TEXT NOT NULL,
                 topic_code TEXT NOT NULL,
                 topic_system TEXT NOT NULL,
                 topic_display TEXT,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (code_key, topic_code, topic_system)
             );
 
             CREATE TABLE IF NOT EXISTS metadata (
