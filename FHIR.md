@@ -205,6 +205,8 @@ Prioritizes support for clinical resources defined in [US Core](http://hl7.org/f
 
 ### Complete Workflow Example
 
+> **Note**: The examples below are simplified for clarity. The SLS web interface at http://localhost:3000 provides "Load Sample ValueSet Bundle" and "Load Sample Resource Bundle" buttons with more comprehensive examples demonstrating multiple topics per ValueSet, cross-ValueSet matching, and other advanced features.
+
 #### Step 1: Check Server Capabilities
 
 ```bash

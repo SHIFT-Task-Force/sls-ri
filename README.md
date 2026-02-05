@@ -273,6 +273,8 @@ Static hosting with browser-based processing:
 
 ### Usage Examples
 
+> **Note**: The examples below are simplified for clarity. The "Load Sample ValueSet Bundle" and "Load Sample Resource Bundle" buttons in the SLS web interface provide more comprehensive examples that demonstrate additional features such as multiple topics per ValueSet and cross-ValueSet matching.
+
 #### API 1: Loading Sensitive Topic Definitions
 
 **Input Options:**
