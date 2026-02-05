@@ -104,6 +104,14 @@ Analyzes resources for sensitive information and applies security labels.
 
 **Multiple Labels**: When a code matches multiple ValueSets or a ValueSet with multiple topics, all applicable security labels are applied to the resource.
 
+## Security Considerations
+
+The `$sls-tag` operation operates only on the data passed in and does not modify server state. It is designed to analyze resources and apply security labels based on pre-loaded ValueSets. This operation can be safely exposed, although questionable why one would use the API without knowing that it does not store anything.
+
+The `$sls-load-valuesets` operation modifies server state by updating the internal database with new code-to-topic mappings. This operation should be secured to prevent unauthorized modifications.
+
+Ultimately there should be audit logging, and possibly a Provenance added to the output Bundle of the `$sls-tag` operation to indicate that it was processed by this service.
+
 ## Resource Cross-References
 
 ### Supported Resource Types for Analysis
