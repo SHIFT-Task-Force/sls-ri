@@ -105,6 +105,34 @@ app.post('/api/v1/analyze', (req, res) => {
     }
 });
 
+// API 2 Variant: Analyze and Tag Resources - Return Full Bundle
+app.post('/api/v1/analyze-full', (req, res) => {
+    try {
+        const bundle = req.body;
+        
+        if (!bundle) {
+            return res.status(400).json({
+                error: 'Request body is required'
+            });
+        }
+
+        const fullBundle = slsService.analyzeResourceBundleFull(bundle);
+        
+        res.status(200).json(fullBundle);
+        
+    } catch (error) {
+        console.error('Error analyzing resources (full bundle):', error);
+        res.status(400).json({
+            resourceType: 'OperationOutcome',
+            issue: [{
+                severity: 'error',
+                code: 'processing',
+                diagnostics: error.message
+            }]
+        });
+    }
+});
+
 // Get system status
 app.get('/api/v1/status', (req, res) => {
     try {
@@ -135,12 +163,12 @@ app.delete('/api/v1/data', (req, res) => {
     }
 });
 
-// Serve static frontend files
-app.use(express.static(path.join(__dirname, 'frontend')));
+// Serve static frontend files from the parent directory
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
 // Catch-all route for SPA
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
 });
 
 // Error handling middleware

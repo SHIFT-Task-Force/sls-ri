@@ -172,46 +172,73 @@ class FHIRSecurityLabelingService {
      */
     async expandValueSet(valueSet) {
         try {
-            console.log(`Expanding ValueSet ${valueSet.id || 'unknown'} using tx.fhir.org...`);
+            console.log(`\n=== Expanding ValueSet ${valueSet.id || 'unknown'} using tx.fhir.org ===`);
             
             const url = 'https://tx.fhir.org/r4/ValueSet/$expand';
+            const requestBody = {
+                resourceType: 'Parameters',
+                parameter: [
+                    {
+                        name: 'valueSet',
+                        resource: valueSet
+                    }
+                ]
+            };
+            
+            console.log('TX Server Request:');
+            console.log(`  URL: ${url}`);
+            console.log(`  Method: POST`);
+            console.log(`  ValueSet ID: ${valueSet.id}`);
+            console.log(`  ValueSet URL: ${valueSet.url || 'not specified'}`);
+            console.log(`  Request Body (truncated):`);
+            console.log(JSON.stringify(requestBody, null, 2).substring(0, 500) + '...');
+            
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/fhir+json',
                     'Accept': 'application/fhir+json'
                 },
-                body: JSON.stringify({
-                    resourceType: 'Parameters',
-                    parameter: [
-                        {
-                            name: 'valueSet',
-                            resource: valueSet
-                        }
-                    ]
-                })
+                body: JSON.stringify(requestBody)
             });
 
+            console.log('\nTX Server Response:');
+            console.log(`  Status: ${response.status} ${response.statusText}`);
+            console.log(`  Headers: ${JSON.stringify(Object.fromEntries(response.headers), null, 2)}`);
+
             if (!response.ok) {
-                console.error(`Expansion failed with status ${response.status}`);
+                const errorText = await response.text();
+                console.error(`  Error Body: ${errorText}`);
+                console.error(`=== Expansion failed for ${valueSet.id || 'unknown'} ===\n`);
                 return null;
             }
 
             const result = await response.json();
+            console.log(`  Response Body (first 1000 chars):`);
+            console.log(JSON.stringify(result, null, 2).substring(0, 1000) + '...');
             
             // Extract expanded ValueSet from Parameters response
             let expandedValueSet = null;
             if (result.resourceType === 'ValueSet' && result.expansion) {
+                console.log(`  Response structure: Direct ValueSet with expansion`);
+                console.log(`  Expansion contains ${result.expansion.contains?.length || 0} codes`);
                 expandedValueSet = result;
             } else if (result.resourceType === 'Parameters' && result.parameter) {
+                console.log(`  Response structure: Parameters wrapper`);
                 const valueSetParam = result.parameter.find(p => p.name === 'return' && p.resource);
                 if (valueSetParam && valueSetParam.resource.expansion) {
+                    console.log(`  Expansion contains ${valueSetParam.resource.expansion.contains?.length || 0} codes`);
                     expandedValueSet = valueSetParam.resource;
+                } else {
+                    console.log(`  Parameters response but no valid ValueSet with expansion found`);
                 }
+            } else {
+                console.log(`  Unexpected response type: ${result.resourceType}`);
             }
 
             if (!expandedValueSet) {
-                console.error('Unexpected expansion response format');
+                console.error('  ERROR: Unexpected expansion response format - no valid expanded ValueSet found');
+                console.error(`=== Expansion failed for ${valueSet.id || 'unknown'} ===\n`);
                 return null;
             }
 
@@ -230,10 +257,18 @@ class FHIRSecurityLabelingService {
                 expandedValueSet.useContext = valueSet.useContext;
             }
 
+            console.log(`\n  SUCCESS: ValueSet ${expandedValueSet.id} expanded successfully`);
+            console.log(`  Final expansion contains ${expandedValueSet.expansion?.contains?.length || 0} codes`);
+            console.log(`=== Expansion complete for ${valueSet.id || 'unknown'} ===\n`);
+            
             return expandedValueSet;
 
         } catch (error) {
-            console.error(`Error expanding ValueSet: ${error.message}`);
+            console.error(`\n  ERROR: Exception during ValueSet expansion`);
+            console.error(`  Error type: ${error.name}`);
+            console.error(`  Error message: ${error.message}`);
+            console.error(`  Stack trace: ${error.stack}`);
+            console.error(`=== Expansion failed for ${valueSet.id || 'unknown'} ===\n`);
             return null;
         }
     }
@@ -434,6 +469,113 @@ class FHIRSecurityLabelingService {
 
         } catch (error) {
             console.error('Error analyzing resources:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * API 2 Variant: Analyze and Tag Resources - Return Full Bundle
+     * Returns a complete bundle with all resources (not just updates)
+     */
+    analyzeResourceBundleFull(bundle) {
+        try {
+            if (!bundle || bundle.resourceType !== 'Bundle') {
+                throw new Error('Invalid Bundle: resourceType must be "Bundle"');
+            }
+
+            if (!bundle.entry || bundle.entry.length === 0) {
+                throw new Error('Bundle contains no entries');
+            }
+
+            // Check if rules have been loaded
+            const rulesCount = this.db.prepare('SELECT COUNT(*) as count FROM rules').get();
+            if (rulesCount.count === 0) {
+                throw new Error('No sensitive topic rules loaded. Please process ValueSets first (API 1).');
+            }
+
+            const rules = this.getAllRules();
+            const earliestDate = this.getMetadata('earliestDate');
+            const updatedEntries = [];
+            let analyzed = 0;
+            let labeled = 0;
+            let skipped = 0;
+
+            // Process all entries from the input bundle
+            for (const entry of bundle.entry) {
+                const resource = entry.resource;
+                
+                // Create a copy of the entry to preserve all original fields
+                const newEntry = JSON.parse(JSON.stringify(entry));
+                
+                if (!resource || !this.SUPPORTED_RESOURCES.includes(resource.resourceType)) {
+                    // Keep unsupported resources as-is
+                    updatedEntries.push(newEntry);
+                    continue;
+                }
+
+                if (this.shouldSkipResource(resource, earliestDate)) {
+                    // Keep skipped resources as-is
+                    updatedEntries.push(newEntry);
+                    skipped++;
+                    continue;
+                }
+
+                analyzed++;
+
+                const matchedTopics = this.analyzeResource(newEntry.resource, rules);
+
+                if (matchedTopics.length > 0) {
+                    this.applySecurityLabels(newEntry.resource, matchedTopics);
+                    labeled++;
+                }
+
+                this.addLastSourceSync(newEntry.resource);
+                updatedEntries.push(newEntry);
+            }
+
+            // Update statistics
+            this.incrementStat('totalResourcesAnalyzed', analyzed);
+            this.incrementStat('totalResourcesLabeled', labeled);
+            this.incrementStat('totalResourcesSkipped', skipped);
+
+            // Create output bundle preserving original bundle structure
+            const outputBundle = {
+                resourceType: 'Bundle',
+                ...(bundle.id && { id: bundle.id }),
+                type: bundle.type || 'collection',
+                ...(bundle.identifier && { identifier: bundle.identifier }),
+                ...(bundle.timestamp && { timestamp: bundle.timestamp }),
+                meta: {
+                    lastUpdated: new Date().toISOString(),
+                    tag: [{
+                        system: 'http://example.org/fhir/CodeSystem/sls-processing',
+                        code: 'sls-tagged',
+                        display: 'SLS Security Labeled'
+                    }]
+                },
+                ...(bundle.total !== undefined && { total: bundle.total }),
+                ...(bundle.link && { link: bundle.link }),
+                entry: updatedEntries,
+                extension: [{
+                    url: 'http://example.org/fhir/StructureDefinition/processing-summary',
+                    extension: [
+                        { url: 'analyzed', valueInteger: analyzed },
+                        { url: 'labeled', valueInteger: labeled },
+                        { url: 'skipped', valueInteger: skipped }
+                    ]
+                }]
+            };
+
+            // Add distinct security labels to bundle meta
+            const securityLabels = this.collectDistinctSecurityLabels(updatedEntries);
+            if (securityLabels.length > 0) {
+                outputBundle.meta.security = securityLabels;
+            }
+
+            return outputBundle;
+
+        } catch (error) {
+            console.error('Error analyzing resources (full bundle):', error);
             throw error;
         }
     }

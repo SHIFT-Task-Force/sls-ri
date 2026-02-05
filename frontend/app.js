@@ -88,7 +88,8 @@ async function processValueSets() {
         output.className = outcome.issue[0].severity === 'error' ? 'output error' : 'output success';
         
         if (outcome.issue[0].severity === 'success') {
-            alert('ValueSets processed successfully! You can now analyze resources in API 2.');
+            const successMsg = '✓ ValueSets processed successfully! You can now analyze resources in API 2.';
+            output.textContent = successMsg + '\n\n' + JSON.stringify(outcome, null, 2);
         }
         
     } catch (error) {
@@ -99,21 +100,20 @@ async function processValueSets() {
 
 // Clear ValueSets
 async function clearValueSets() {
-    if (confirm('Are you sure you want to clear all ValueSets and rules? This cannot be undone.')) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/v1/data`, {
-                method: 'DELETE'
-            });
-            
-            const result = await response.json();
-            
-            document.getElementById('valuesetOutput').textContent = result.message || 'All ValueSets and rules have been cleared.';
-            document.getElementById('valuesetOutput').className = 'output success';
-            alert('All data cleared successfully.');
-            
-        } catch (error) {
-            alert(`Error clearing data: ${error.message}`);
-        }
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/v1/data`, {
+            method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        const output = document.getElementById('valuesetOutput');
+        output.textContent = '✓ All data cleared successfully.\n\n' + (result.message || 'All ValueSets and rules have been cleared.');
+        output.className = 'output success';
+        
+    } catch (error) {
+        const output = document.getElementById('valuesetOutput');
+        output.textContent = `✗ Error clearing data: ${error.message}`;
+        output.className = 'output error';
     }
 }
 
@@ -149,10 +149,11 @@ async function fetchResourceFromUrl() {
     }
 }
 
-// API 2: Analyze Resources
-async function analyzeResources() {
+// API 2: Analyze Resources - Full Bundle (includes all resources)
+async function analyzeResourcesFull() {
     const input = document.getElementById('resourceInput').value.trim();
     const output = document.getElementById('resourceOutput');
+    const outputTitle = document.getElementById('resourceOutputTitle');
     
     if (!input) {
         output.textContent = 'Please provide a FHIR Bundle with clinical resources.';
@@ -166,6 +167,70 @@ async function analyzeResources() {
         // Show loading state
         output.textContent = 'Analyzing resources...';
         output.className = 'output';
+        outputTitle.textContent = 'Bundle Result:';
+        
+        const response = await fetch(`${API_BASE_URL}/api/v1/analyze-full`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bundle)
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.issue ? error.issue[0].diagnostics : 'Analysis failed');
+        }
+        
+        const resultBundle = await response.json();
+        
+        // Show summary
+        const summary = resultBundle.extension[0].extension;
+        const analyzed = summary.find(e => e.url === 'analyzed').valueInteger;
+        const labeled = summary.find(e => e.url === 'labeled').valueInteger;
+        const skipped = summary.find(e => e.url === 'skipped').valueInteger;
+        
+        // Store bundle for clipboard
+        const bundleJson = JSON.stringify(resultBundle, null, 2);
+        output.dataset.bundleJson = bundleJson;
+        
+        const summaryMsg = `✓ Analysis complete! Analyzed: ${analyzed} | Labeled: ${labeled} | Skipped: ${skipped}`;
+        output.textContent = summaryMsg + '\n\n' + bundleJson;
+        output.className = 'output success';
+        outputTitle.textContent = 'Full Bundle (with security labels):';
+        
+        // Show the copy button
+        document.getElementById('copyAnalysisBtn').style.display = 'inline-block';
+        
+    } catch (error) {
+        output.textContent = `Error: ${error.message}`;
+        output.className = 'output error';
+        outputTitle.textContent = 'Bundle Result:';
+        delete output.dataset.bundleJson;
+        // Hide the copy button on error
+        document.getElementById('copyAnalysisBtn').style.display = 'none';
+    }
+}
+
+// API 2: Analyze Resources - Batch Bundle (only updated resources)
+async function analyzeResources() {
+    const input = document.getElementById('resourceInput').value.trim();
+    const output = document.getElementById('resourceOutput');
+    const outputTitle = document.getElementById('resourceOutputTitle');
+    
+    if (!input) {
+        output.textContent = 'Please provide a FHIR Bundle with clinical resources.';
+        output.className = 'output error';
+        return;
+    }
+    
+    try {
+        const bundle = JSON.parse(input);
+        
+        // Show loading state
+        output.textContent = 'Analyzing resources...';
+        output.className = 'output';
+        outputTitle.textContent = 'Bundle Result:';
         
         const response = await fetch(`${API_BASE_URL}/api/v1/analyze`, {
             method: 'POST',
@@ -182,20 +247,85 @@ async function analyzeResources() {
         
         const batchBundle = await response.json();
         
-        output.textContent = JSON.stringify(batchBundle, null, 2);
-        output.className = 'output success';
-        
         // Show summary
         const summary = batchBundle.extension[0].extension;
         const analyzed = summary.find(e => e.url === 'analyzed').valueInteger;
         const labeled = summary.find(e => e.url === 'labeled').valueInteger;
         const skipped = summary.find(e => e.url === 'skipped').valueInteger;
         
-        alert(`Analysis complete!\nAnalyzed: ${analyzed}\nLabeled: ${labeled}\nSkipped: ${skipped}`);
+        // Store bundle for clipboard
+        const bundleJson = JSON.stringify(batchBundle, null, 2);
+        output.dataset.bundleJson = bundleJson;
+        
+        const summaryMsg = `✓ Analysis complete! Analyzed: ${analyzed} | Labeled: ${labeled} | Skipped: ${skipped}`;
+        output.textContent = summaryMsg + '\n\n' + bundleJson;
+        output.className = 'output success';
+        outputTitle.textContent = 'Batch Bundle (with update actions):';
+        
+        // Show the copy button
+        document.getElementById('copyAnalysisBtn').style.display = 'inline-block';
         
     } catch (error) {
         output.textContent = `Error: ${error.message}`;
         output.className = 'output error';
+        outputTitle.textContent = 'Bundle Result:';
+        delete output.dataset.bundleJson;
+        // Hide the copy button on error
+        document.getElementById('copyAnalysisBtn').style.display = 'none';
+    }
+}
+
+// Copy Analysis Output to Clipboard
+async function copyAnalysisOutput() {
+    const output = document.getElementById('resourceOutput');
+    const button = document.getElementById('copyAnalysisBtn');
+    
+    // Get the stored bundle JSON (without summary text)
+    const bundleJson = output.dataset.bundleJson;
+    
+    if (!bundleJson) {
+        button.textContent = '✗ No output';
+        setTimeout(() => { button.textContent = '📋 Copy to Clipboard'; }, 2000);
+        return;
+    }
+    
+    try {
+        await navigator.clipboard.writeText(bundleJson);
+        
+        // Visual feedback
+        const originalText = button.textContent;
+        button.textContent = '✓ Copied!';
+        button.style.backgroundColor = '#27ae60';
+        
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.style.backgroundColor = '';
+        }, 2000);
+        
+    } catch (error) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = bundleJson;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            button.textContent = '✓ Copied!';
+            button.style.backgroundColor = '#27ae60';
+            
+            setTimeout(() => {
+                button.textContent = '📋 Copy to Clipboard';
+                button.style.backgroundColor = '';
+            }, 2000);
+        } catch (err) {
+            button.textContent = '✗ Copy failed';
+            setTimeout(() => { button.textContent = '📋 Copy to Clipboard'; }, 2000);
+        }
+        
+        document.body.removeChild(textArea);
     }
 }
 
@@ -243,7 +373,10 @@ async function refreshStatus() {
         
     } catch (error) {
         console.error('Error refreshing status:', error);
-        alert('Failed to refresh status. Is the server running?');
+        const errorMsg = '<p class="error">✗ Failed to refresh status. Is the server running?</p>';
+        document.getElementById('valuesetStatus').innerHTML = errorMsg;
+        document.getElementById('rulesStatus').innerHTML = errorMsg;
+        document.getElementById('statsStatus').innerHTML = errorMsg;
     }
 }
 
@@ -268,14 +401,19 @@ async function exportData() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
+        const statsStatus = document.getElementById('statsStatus');
+        statsStatus.innerHTML = '<p class="success">✓ Data exported successfully!</p>' + statsStatus.innerHTML;
+        
     } catch (error) {
-        alert(`Export failed: ${error.message}`);
+        const statsStatus = document.getElementById('statsStatus');
+        statsStatus.innerHTML = `<p class="error">✗ Export failed: ${error.message}</p>` + statsStatus.innerHTML;
     }
 }
 
 // Import Data (note: would need backend endpoint to restore)
 function importData() {
-    alert('Import functionality requires database restoration. Please contact your administrator.');
+    const statsStatus = document.getElementById('statsStatus');
+    statsStatus.innerHTML = '<p class="warning">⚠ Import functionality requires database restoration. Please contact your administrator.</p>' + statsStatus.innerHTML;
 }
 
 // Sample Data Loaders (same as before)
@@ -469,6 +607,6 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('✗ Backend service is not available:', error);
-            alert('Warning: Unable to connect to backend service. Please ensure the server is running.');
+            console.warn('Warning: Unable to connect to backend service. Please ensure the server is running.');
         });
 });

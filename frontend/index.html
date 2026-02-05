@@ -62,12 +62,16 @@
                 
                 <div class="button-group">
                     <button onclick="loadSampleResources()">Load Sample Resource Bundle</button>
-                    <button onclick="analyzeResources()" class="primary">Analyze & Tag Resources</button>
+                    <button onclick="analyzeResourcesFull()" class="primary">Analyze & Tag Resources</button>
+                    <button onclick="analyzeResources()" class="secondary">Analyze into Update Bundle</button>
                 </div>
             </div>
 
             <div class="output-section">
-                <h3>Batch Bundle (with update actions):</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0;" id="resourceOutputTitle">Bundle Result:</h3>
+                    <button onclick="copyAnalysisOutput()" class="secondary" id="copyAnalysisBtn" style="display: none;">📋 Copy to Clipboard</button>
+                </div>
                 <pre id="resourceOutput" class="output"></pre>
             </div>
         </div>

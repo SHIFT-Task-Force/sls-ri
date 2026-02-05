@@ -91,7 +91,8 @@ async function processValueSets() {
         
         // Show success message
         if (outcome.issue[0].severity === 'success') {
-            alert('ValueSets processed successfully! You can now analyze resources in API 2.');
+            const successMsg = '✓ ValueSets processed successfully! You can now analyze resources in API 2.';
+            output.textContent = successMsg + '\n\n' + JSON.stringify(outcome, null, 2);
         }
         
     } catch (error) {
@@ -104,9 +105,9 @@ async function processValueSets() {
 function clearValueSets() {
     if (confirm('Are you sure you want to clear all ValueSets and rules? This cannot be undone.')) {
         slsService.clearAllData();
-        document.getElementById('valuesetOutput').textContent = 'All ValueSets and rules have been cleared.';
-        document.getElementById('valuesetOutput').className = 'output success';
-        alert('All data cleared successfully.');
+        const output = document.getElementById('valuesetOutput');
+        output.textContent = '✓ All data cleared successfully.\n\nAll ValueSets and rules have been cleared.';
+        output.className = 'output success';
     }
 }
 
@@ -169,16 +170,15 @@ function analyzeResources() {
         const bundle = JSON.parse(input);
         const batchBundle = slsService.analyzeResourceBundle(bundle);
         
-        output.textContent = JSON.stringify(batchBundle, null, 2);
-        output.className = 'output success';
-        
         // Show summary
         const summary = batchBundle.extension[0].extension;
         const analyzed = summary.find(e => e.url === 'analyzed').valueInteger;
         const labeled = summary.find(e => e.url === 'labeled').valueInteger;
         const skipped = summary.find(e => e.url === 'skipped').valueInteger;
         
-        alert(`Analysis complete!\nAnalyzed: ${analyzed}\nLabeled: ${labeled}\nSkipped: ${skipped}`);
+        const summaryMsg = `✓ Analysis complete! Analyzed: ${analyzed} | Labeled: ${labeled} | Skipped: ${skipped}`;
+        output.textContent = summaryMsg + '\n\n' + JSON.stringify(batchBundle, null, 2);
+        output.className = 'output success';
         
     } catch (error) {
         output.textContent = `Error: ${error.message}`;
@@ -271,10 +271,12 @@ function importData() {
             try {
                 const data = JSON.parse(event.target.result);
                 slsService.importData(data);
-                alert('Data imported successfully!');
+                const statsStatus = document.getElementById('statsStatus');
+                statsStatus.innerHTML = '<p class="success">✓ Data imported successfully!</p>' + statsStatus.innerHTML;
                 refreshStatus();
             } catch (error) {
-                alert(`Import failed: ${error.message}`);
+                const statsStatus = document.getElementById('statsStatus');
+                statsStatus.innerHTML = `<p class="error">✗ Import failed: ${error.message}</p>` + statsStatus.innerHTML;
             }
         };
         

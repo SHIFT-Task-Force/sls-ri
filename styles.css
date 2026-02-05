@@ -250,6 +250,16 @@ button:not(.primary):not(.secondary):hover {
     font-weight: 600;
 }
 
+.status-box p.success {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.status-box p.error {
+    color: var(--error-color);
+    font-weight: 600;
+}
+
 .status-box strong {
     color: var(--primary-color);
 }
