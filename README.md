@@ -419,6 +419,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - **SHIFT Task Force** - Project sponsorship and healthcare expertise
 - **HL7 FHIR Community** - Standards development and guidance
 - **US Core Contributors** - Implementation guide development
+- **Mohammad Jafari** - Initial LEAP Reference Implementation and project lead for DS4P
+- **John Moehrke** - Project direction and healthcare security expertise
 
 ## Support & Contact
 
@@ -430,8 +432,13 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 Potential future enhancements:
 
+- [ ] Frontend support for uploading clinical content in a zip
 - [ ] Provenance resource generation
 - [ ] AuditEvent resource creation
+- [ ] Inspection of Extensions for codes
+- [ ] Other resource types (e.g., ImagingSelection, GenomicStudy, FamilyMemberHistory)
+- [ ] Inspection of Narrative and attachments
+- [ ] Support for complex combinations of codes (AND/OR logic)
 - [ ] PATCH support for batch updates
 - [ ] IndexedDB for larger datasets
 - [ ] Service Worker for offline capability
