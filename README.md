@@ -130,6 +130,17 @@ Returns the server's capabilities, supported operations, and FHIR version.
 - `GET [base]/OperationDefinition/sls-load-valuesets`
 - `GET [base]/OperationDefinition/sls-tag`
 
+### Support/Admin Endpoints (Non-FHIR Operations)
+
+These endpoints support UI status, health monitoring, and administrative reset:
+
+- `GET [base]/health` - Service health check
+- `GET [base]/status` - Current ValueSets, rules summary, latest knowledge date, and processing statistics
+- `POST [base]/admin/clear-data` - Clears stored ValueSets/rules/metadata/statistics
+- `GET [base]/status.html` - Standalone status dashboard page
+
+> The two core SLS business operations remain `POST [base]/$sls-load-valuesets` and `POST [base]/$sls-tag`.
+
 > **For complete technical details**, including parameter specifications, database schema, and full examples, see [FHIR.md](FHIR.md)
 
 ## Getting Started
