@@ -342,12 +342,68 @@ async function copyAnalysisOutput() {
     }
 }
 
-// Refresh Status Display - Not implemented in FHIR operations
+// Refresh Status Display from backend /status endpoint
 async function refreshStatus() {
-    const infoMsg = '<p class="info">Status dashboard not available. This reference implementation focuses on FHIR operations only.<br>Check the output from processing ValueSets and analyzing resources for details.</p>';
-    document.getElementById('valuesetStatus').innerHTML = infoMsg;
-    document.getElementById('rulesStatus').innerHTML = infoMsg;
-    document.getElementById('statsStatus').innerHTML = infoMsg;
+    const valueSetStatus = document.getElementById('valuesetStatus');
+    const rulesStatus = document.getElementById('rulesStatus');
+    const statsStatus = document.getElementById('statsStatus');
+
+    const loadingMsg = '<p class="info">Loading status...</p>';
+    valueSetStatus.innerHTML = loadingMsg;
+    rulesStatus.innerHTML = loadingMsg;
+    statsStatus.innerHTML = loadingMsg;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/status`);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const status = await response.json();
+        const valueSets = Array.isArray(status.valueSets) ? status.valueSets : [];
+        const rulesByTopic = Array.isArray(status.rulesByTopic) ? status.rulesByTopic : [];
+        const stats = status.stats || {};
+
+        if (valueSets.length === 0) {
+            valueSetStatus.innerHTML = '<p class="warning">No ValueSets loaded. Use API 1 to load ValueSets.</p>';
+        } else {
+            let html = `<p><strong>Total ValueSets:</strong> ${valueSets.length}</p>`;
+            html += `<p><strong>Earliest Date:</strong> ${status.earliestDate || 'N/A'}</p>`;
+            html += '<ul>';
+            for (const vs of valueSets) {
+                html += `<li><strong>${vs.id}</strong> (${vs.date || 'No date'})</li>`;
+            }
+            html += '</ul>';
+            valueSetStatus.innerHTML = html;
+        }
+
+        if ((status.rulesCount || 0) === 0) {
+            rulesStatus.innerHTML = '<p class="warning">No rules loaded. Process ValueSets first.</p>';
+        } else {
+            let html = `<p><strong>Total Rules:</strong> ${status.rulesCount}</p>`;
+            if (rulesByTopic.length > 0) {
+                html += '<p><strong>By Topic:</strong></p><ul>';
+                for (const topic of rulesByTopic) {
+                    html += `<li>${topic.display || topic.code}: ${topic.codeCount} codes</li>`;
+                }
+                html += '</ul>';
+            }
+            rulesStatus.innerHTML = html;
+        }
+
+        let statsHtml = '<ul>';
+        statsHtml += `<li><strong>ValueSets Processed:</strong> ${stats.totalValueSetsProcessed || 0}</li>`;
+        statsHtml += `<li><strong>Resources Analyzed:</strong> ${stats.totalResourcesAnalyzed || 0}</li>`;
+        statsHtml += `<li><strong>Resources Labeled:</strong> ${stats.totalResourcesLabeled || 0}</li>`;
+        statsHtml += `<li><strong>Resources Skipped:</strong> ${stats.totalResourcesSkipped || 0}</li>`;
+        statsHtml += '</ul>';
+        statsStatus.innerHTML = statsHtml;
+    } catch (error) {
+        const errorMsg = `<p class="error">Unable to load status: ${error.message}</p>`;
+        valueSetStatus.innerHTML = errorMsg;
+        rulesStatus.innerHTML = errorMsg;
+        statsStatus.innerHTML = errorMsg;
+    }
 }
 
 // Export Data - Not implemented in FHIR operations

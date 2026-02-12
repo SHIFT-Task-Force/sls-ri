@@ -845,6 +845,16 @@ class FHIRSecurityLabelingService {
     getStatus() {
         const valueSets = this.db.prepare('SELECT id, date FROM valuesets').all();
         const rulesCount = this.db.prepare('SELECT COUNT(*) as count FROM rules').get();
+        const rulesByTopic = this.db.prepare(`
+            SELECT
+                topic_code AS code,
+                topic_system AS system,
+                COALESCE(topic_display, topic_code) AS display,
+                COUNT(*) AS codeCount
+            FROM rules
+            GROUP BY topic_code, topic_system, topic_display
+            ORDER BY codeCount DESC, display ASC
+        `).all();
         const stats = this.getStats();
         const earliestDate = this.getMetadata('earliestDate');
 
@@ -854,6 +864,7 @@ class FHIRSecurityLabelingService {
                 date: vs.date
             })),
             rulesCount: rulesCount.count,
+            rulesByTopic: rulesByTopic,
             earliestDate: earliestDate,
             stats: stats
         };
