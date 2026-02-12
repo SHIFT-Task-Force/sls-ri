@@ -188,6 +188,31 @@ app.get('/status', (req, res) => {
     }
 });
 
+// Admin endpoint: clear all persisted SLS data
+app.post('/admin/clear-data', (req, res) => {
+    try {
+        slsService.clearAllData();
+        res.status(200).json({
+            resourceType: 'OperationOutcome',
+            issue: [{
+                severity: 'success',
+                code: 'informational',
+                diagnostics: 'All ValueSets, rules, metadata, and statistics have been cleared.'
+            }]
+        });
+    } catch (error) {
+        console.error('Error clearing persisted data:', error);
+        res.status(500).json({
+            resourceType: 'OperationOutcome',
+            issue: [{
+                severity: 'error',
+                code: 'exception',
+                diagnostics: `Failed to clear data: ${error.message}`
+            }]
+        });
+    }
+});
+
 // Status page (HTML)
 app.get('/status.html', (req, res) => {
     try {

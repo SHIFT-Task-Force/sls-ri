@@ -98,11 +98,36 @@ async function processValueSets() {
     }
 }
 
-// Clear ValueSets - Not implemented in FHIR operations
+// Clear ValueSets and rules from server-side persistence
 async function clearValueSets() {
     const output = document.getElementById('valuesetOutput');
-    output.textContent = 'Note: Clear functionality requires server restart to reset the database.\nStop and restart the Docker container to clear all data.';
-    output.className = 'output warning';
+
+    if (!confirm('Are you sure you want to clear all ValueSets and rules? This cannot be undone.')) {
+        return;
+    }
+
+    try {
+        output.textContent = 'Clearing all server-side data...';
+        output.className = 'output';
+
+        const response = await fetch(`${API_BASE_URL}/admin/clear-data`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const outcome = await response.json();
+        if (!response.ok || outcome.issue?.[0]?.severity === 'error') {
+            throw new Error(outcome.issue?.[0]?.diagnostics || `Clear failed with status ${response.status}`);
+        }
+
+        output.textContent = '✓ All data cleared successfully.\n\nAll ValueSets and rules have been cleared from the server database.';
+        output.className = 'output success';
+    } catch (error) {
+        output.textContent = `Error clearing data: ${error.message}`;
+        output.className = 'output error';
+    }
 }
 
 // Fetch Resource Bundle from URL

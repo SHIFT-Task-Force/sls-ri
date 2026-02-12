@@ -191,6 +191,21 @@ docker-compose exec sls-backend cp /app/data/sls.db /app/data/backup.db
 docker cp fhir-sls-backend:/app/data/sls.db ./sls-backup.db
 ```
 
+### Resetting All Stored Data
+
+Restarting the container (`docker-compose restart`) does **not** clear data because the database is persisted in the `sls-data` volume.
+
+Use one of these options instead:
+
+```bash
+# Option 1: Clear from the UI button (calls POST /admin/clear-data)
+# Open http://localhost:3000 and click "Clear all valueSets"
+
+# Option 2: Remove container and volume (full reset)
+docker-compose down -v
+docker-compose up -d --build
+```
+
 ## Environment Variables
 
 You can customize the service by setting environment variables in `docker-compose.yml`:
