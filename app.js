@@ -191,7 +191,7 @@ function refreshStatus() {
     const valueSets = slsService.getValueSets();
     const rules = slsService.getRules();
     const stats = slsService.getStats();
-    const earliestDate = slsService.getEarliestDate();
+    const latestDate = slsService.getLatestDate();
     
     // ValueSet Status
     const vsStatus = document.getElementById('valuesetStatus');
@@ -199,7 +199,7 @@ function refreshStatus() {
         vsStatus.innerHTML = '<p class="warning">No ValueSets loaded. Use API 1 to load ValueSets.</p>';
     } else {
         let html = `<p><strong>Total ValueSets:</strong> ${valueSets.length}</p>`;
-        html += `<p><strong>Earliest Date:</strong> ${earliestDate || 'N/A'}</p>`;
+        html += `<p><strong>Latest Date:</strong> ${latestDate || 'N/A'}</p>`;
         html += '<ul>';
         valueSets.forEach(vs => {
             const topicCoding = slsService.extractTopicCoding(vs);

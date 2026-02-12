@@ -72,7 +72,7 @@ class FHIRSecurityLabelingService {
         try {
             let valueSets = [];
             let errors = [];
-            let earliestDate = null;
+            let latestDate = null;
 
             // Handle single ValueSet
             if (input && input.resourceType === 'ValueSet') {
@@ -95,7 +95,7 @@ class FHIRSecurityLabelingService {
                 // Prefer expansion.timestamp over date
                 const vsDate = this.getValueSetDate(input);
                 if (vsDate) {
-                    earliestDate = vsDate;
+                    latestDate = vsDate;
                 }
             }
             // Handle Bundle
@@ -132,8 +132,8 @@ class FHIRSecurityLabelingService {
                     // Prefer expansion.timestamp over date
                     const vsDate = this.getValueSetDate(resource);
                     if (vsDate) {
-                        if (!earliestDate || vsDate < earliestDate) {
-                            earliestDate = vsDate;
+                        if (!latestDate || vsDate > latestDate) {
+                            latestDate = vsDate;
                         }
                     }
 
@@ -150,7 +150,7 @@ class FHIRSecurityLabelingService {
             }
 
             // Store ValueSets and build rules
-            this.storeValueSets(valueSets, earliestDate);
+            this.storeValueSets(valueSets, latestDate);
             this.buildRules(valueSets);
 
             // Update statistics
@@ -351,7 +351,7 @@ class FHIRSecurityLabelingService {
     /**
      * Store ValueSets in database
      */
-    storeValueSets(valueSets, earliestDate) {
+    storeValueSets(valueSets, latestDate) {
         const insertStmt = this.db.prepare(
             'INSERT OR REPLACE INTO valuesets (id, resource, date) VALUES (?, ?, ?)'
         );
@@ -360,11 +360,11 @@ class FHIRSecurityLabelingService {
             insertStmt.run(vs.id, JSON.stringify(vs), vs.date || null);
         }
 
-        // Update earliest date if needed
-        if (earliestDate) {
-            const currentEarliest = this.getMetadata('earliestDate');
-            if (!currentEarliest || earliestDate < new Date(currentEarliest)) {
-                this.setMetadata('earliestDate', earliestDate.toISOString());
+        // Update latest date if needed
+        if (latestDate) {
+            const currentLatest = this.getMetadata('latestDate');
+            if (!currentLatest || latestDate > new Date(currentLatest)) {
+                this.setMetadata('latestDate', latestDate.toISOString());
             }
         }
     }
@@ -435,7 +435,7 @@ class FHIRSecurityLabelingService {
             }
 
             const rules = this.getAllRules();
-            const earliestDate = this.getMetadata('earliestDate');
+            const latestDate = this.getMetadata('latestDate') || this.getMetadata('earliestDate');
             const batchEntries = [];
             let analyzed = 0;
             let labeled = 0;
@@ -448,7 +448,7 @@ class FHIRSecurityLabelingService {
                     continue;
                 }
 
-                if (this.shouldSkipResource(resource, earliestDate)) {
+                if (this.shouldSkipResource(resource, latestDate)) {
                     skipped++;
                     continue;
                 }
@@ -504,7 +504,7 @@ class FHIRSecurityLabelingService {
             }
 
             const rules = this.getAllRules();
-            const earliestDate = this.getMetadata('earliestDate');
+            const latestDate = this.getMetadata('latestDate') || this.getMetadata('earliestDate');
             const updatedEntries = [];
             let analyzed = 0;
             let labeled = 0;
@@ -523,7 +523,7 @@ class FHIRSecurityLabelingService {
                     continue;
                 }
 
-                if (this.shouldSkipResource(resource, earliestDate)) {
+                if (this.shouldSkipResource(resource, latestDate)) {
                     // Keep skipped resources as-is
                     updatedEntries.push(newEntry);
                     skipped++;
@@ -612,8 +612,8 @@ class FHIRSecurityLabelingService {
     /**
      * Check if resource should be skipped
      */
-    shouldSkipResource(resource, earliestDate) {
-        if (!earliestDate || !resource.meta || !resource.meta.extension) {
+    shouldSkipResource(resource, latestDate) {
+        if (!latestDate || !resource.meta || !resource.meta.extension) {
             return false;
         }
 
@@ -626,7 +626,7 @@ class FHIRSecurityLabelingService {
         }
 
         const syncDate = new Date(syncExt.valueDateTime);
-        return syncDate > new Date(earliestDate);
+        return syncDate >= new Date(latestDate);
     }
 
     /**
@@ -856,7 +856,7 @@ class FHIRSecurityLabelingService {
             ORDER BY codeCount DESC, display ASC
         `).all();
         const stats = this.getStats();
-        const earliestDate = this.getMetadata('earliestDate');
+        const latestDate = this.getMetadata('latestDate') || this.getMetadata('earliestDate');
 
         return {
             valueSets: valueSets.map(vs => ({
@@ -865,7 +865,7 @@ class FHIRSecurityLabelingService {
             })),
             rulesCount: rulesCount.count,
             rulesByTopic: rulesByTopic,
-            earliestDate: earliestDate,
+            latestDate: latestDate,
             stats: stats
         };
     }

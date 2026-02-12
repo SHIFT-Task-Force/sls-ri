@@ -368,7 +368,7 @@ async function refreshStatus() {
             valueSetStatus.innerHTML = '<p class="warning">No ValueSets loaded. Use API 1 to load ValueSets.</p>';
         } else {
             let html = `<p><strong>Total ValueSets:</strong> ${valueSets.length}</p>`;
-            html += `<p><strong>Earliest Date:</strong> ${status.earliestDate || 'N/A'}</p>`;
+            html += `<p><strong>Latest Date:</strong> ${status.latestDate || 'N/A'}</p>`;
             html += '<ul>';
             for (const vs of valueSets) {
                 html += `<li><strong>${vs.id}</strong> (${vs.date || 'No date'})</li>`;

@@ -52,12 +52,12 @@ This is a Web Service that has the following 2 APIs:
             - `ValueSet.topic[].coding[0]` element (supports multiple topic entries), OR
             - `ValueSet.useContext[]` with `code.code = 'focus'` and the topic in `valueCodeableConcept.coding[0]` (supports multiple focus contexts)
         - **Multiple Topics**: A single ValueSet can have multiple topic codes (e.g., PSYTHPN, SUD, BH). All topics from all focus contexts are extracted and applied to matching codes.
-    - Recording the earliest dateTime from the ValueSet.expansion.timestamp or ValueSet.date element to determine the effective date for the sensitive categories.
+    - Recording the latest dateTime from the ValueSet.expansion.timestamp or ValueSet.date element to determine the newest effective date for sensitive category knowledge.
     - Returning an OperationOutcome indicating success or failure of the ValueSet processing.
 2. Tag a Bundle of Clinical Resources
     - Receives a FHIR Bundle holding one or more FHIR resources (e.g., Condition, Observation, MedicationStatement) to be analyzed for sensitive information.
     - Inspecting FHIR Bundle entries and processing each resource as follows:
-        - If the resource.meta element has an extension `http://hl7.org/fhir/StructureDefinition/lastSourceSync`, and the valueDateTime is later than the earliest ValueSet.date; then this resource does not need to be re-analyzed and therefore is skipped and not included in the output Bundle.
+        - If the resource.meta element has an extension `http://hl7.org/fhir/StructureDefinition/lastSourceSync`, and the valueDateTime is equal to or later than the latest ValueSet.date; then this resource does not need to be re-analyzed and therefore is skipped and not included in the output Bundle.
         - Analyzing each resource's elements that are code, coding, or codeableConcept to identify any codes that match the internal rule set of sensitive categories.
         - For resources that contain sensitive information, applying FHIR security labels to the resource's meta.security element, including:
             - The confidentialityCode `R` (restricted)
@@ -73,13 +73,13 @@ graph LR
     A[ValueSet Bundle or<br/>Single ValueSet] --> B[Load & Store ValueSets]
     B --> C[Build Internal Rule Set<br/>from expansion codes]
     C --> D[Extract topic from<br/>topic or useContext]
-    D --> E[Track Earliest ValueSet.date]
+    D --> E[Track Latest ValueSet.date]
     E --> F[Return OperationOutcome]
   end
   
   subgraph API2["API 2: Tag Clinical Resources"]
     G[Resource Bundle] --> H{Check meta.lastSourceSync}
-    H -->|Later than ValueSet.date| I[Skip - No Re-analysis]
+    H -->|Equal/Later than latest ValueSet.date| I[Skip - No Re-analysis]
     H -->|Needs Analysis| J[Code Analysis Engine]
     
     J --> K{Analyze code/coding/codeableConcept}
