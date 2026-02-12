@@ -202,7 +202,10 @@ function refreshStatus() {
         html += `<p><strong>Earliest Date:</strong> ${earliestDate || 'N/A'}</p>`;
         html += '<ul>';
         valueSets.forEach(vs => {
-            const topicDisplay = vs.topic[0].coding[0].display || vs.topic[0].coding[0].code;
+            const topicCoding = slsService.extractTopicCoding(vs);
+            const topicDisplay = topicCoding
+                ? (topicCoding.display || topicCoding.code)
+                : 'No topic';
             html += `<li><strong>${vs.id}</strong> - ${topicDisplay} (${vs.date || 'No date'})</li>`;
         });
         html += '</ul>';
