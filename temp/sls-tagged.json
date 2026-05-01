@@ -1,0 +1,2538 @@
+{
+  "resourceType": "Bundle",
+  "id": "AllOfMaxineMayfield16",
+  "type": "batch",
+  "meta": {
+    "lastUpdated": "2026-05-01T21:35:35.599Z",
+    "tag": [
+      {
+        "system": "http://example.org/fhir/CodeSystem/sls-processing",
+        "code": "sls-tagged",
+        "display": "SLS Security Labeled"
+      }
+    ],
+    "security": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+        "code": "R",
+        "display": "restricted"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "SEX",
+        "display": "SEX"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "GDIS",
+        "display": "GDIS"
+      },
+      {
+        "system": "http://SHIFT-Task-Force.github.io/SLS-ValueSets/CodeSystem/extraSensitivityCodes",
+        "code": "ABORTION",
+        "display": "ABORTION"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "STD",
+        "display": "STD"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "HIV",
+        "display": "HIV"
+      }
+    ]
+  },
+  "entry": [
+    {
+      "fullUrl": "http://example.org/fhir/Patient/MaxineMayfield16",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "MaxineMayfield16",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Patient_MaxineMayfield16\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Patient MaxineMayfield16</b></p><a name=\"MaxineMayfield16\"> </a><a name=\"hcMaxineMayfield16\"> </a><p style=\"border: 1px #661aff solid; background-color: #e6e6ff; padding: 10px;\">Maxine Mayfield (official) Female, DoB: 2009-07-18</p><hr/><table class=\"grid\"><tr><td style=\"background-color: #f3f5da\" title=\"Alternate names (see the one above)\">Alt. Name:</td><td colspan=\"3\">Max(Nickname)</td></tr><tr><td style=\"background-color: #f3f5da\" title=\"Nominated Contact: Emergency Contact\">Emergency Contact:</td><td colspan=\"3\"><ul><li>Sue Hargrove </li></ul></td></tr><tr><td style=\"background-color: #f3f5da\" title=\"Nominated Contact: Emergency Contact\">Emergency Contact:</td><td colspan=\"3\"><ul><li>Sam Mayfield </li></ul></td></tr><tr><td style=\"background-color: #f3f5da\" title=\"The pronouns to use when referring to an individual in verbal or written communication.\">Individual Pronouns:</td><td colspan=\"3\"><ul><li>value: <span title=\"Codes:{http://loinc.org LA29519-8}\">she/her/her/hers/herself</span></li></ul></td></tr><tr><td style=\"background-color: #f3f5da\" title=\"The pronouns to use when referring to an individual in verbal or written communication.\">Individual Pronouns:</td><td colspan=\"3\"><ul><li>value: <span title=\"Codes:{http://loinc.org LA29520-6}\">they/them/their/theirs/themselves</span></li></ul></td></tr><tr><td style=\"background-color: #f3f5da\" title=\"An individual's personal sense of being a man, woman, boy, girl, nonbinary, or something else. This represents an individual’s identity, ascertained by asking them what that identity is. \n In the case where the gender identity is communicated by a third party, for example, if a spouse indicates the gender identity of their partner on an intake form, a Provenance resource can be used with a Provenance.target referring to the Patient, with a targetElement extension identifying the gender identity extension as the target element within the Patient resource.  When exchanging this concept, refer to the guidance in the [Gender Harmony Implementation Guide](http://hl7.org/xprod/ig/uv/gender-harmony/).\">Individual Gender Identity:</td><td colspan=\"3\"><ul><li>value: <span title=\"Codes:{http://snomed.info/sct 33791000087105}\">Non-binary gender identity</span></li></ul></td></tr></table></div>"
+        },
+        "extension": [
+          {
+            "extension": [
+              {
+                "url": "value",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://snomed.info/sct",
+                      "code": "33791000087105",
+                      "display": "Non-binary gender identity"
+                    }
+                  ]
+                }
+              }
+            ],
+            "url": "http://hl7.org/fhir/StructureDefinition/individual-genderIdentity"
+          },
+          {
+            "extension": [
+              {
+                "url": "value",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://loinc.org",
+                      "code": "LA29519-8",
+                      "display": "she/her/her/hers/herself"
+                    }
+                  ]
+                }
+              }
+            ],
+            "url": "http://hl7.org/fhir/StructureDefinition/individual-pronouns"
+          },
+          {
+            "extension": [
+              {
+                "url": "value",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "system": "http://loinc.org",
+                      "code": "LA29520-6",
+                      "display": "they/them/their/theirs/themselves"
+                    }
+                  ]
+                }
+              }
+            ],
+            "url": "http://hl7.org/fhir/StructureDefinition/individual-pronouns"
+          }
+        ],
+        "name": [
+          {
+            "use": "official",
+            "family": "Mayfield",
+            "given": [
+              "Maxine"
+            ]
+          },
+          {
+            "use": "nickname",
+            "text": "Max"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "2009-07-18",
+        "contact": [
+          {
+            "relationship": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0131",
+                    "code": "C",
+                    "display": "Emergency Contact"
+                  }
+                ],
+                "text": "Mother (MA Records) / Guardian"
+              }
+            ],
+            "name": {
+              "family": "Hargrove",
+              "given": [
+                "Sue"
+              ]
+            }
+          },
+          {
+            "relationship": [
+              {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0131",
+                    "code": "C",
+                    "display": "Emergency Contact"
+                  }
+                ],
+                "text": "Father (FL Records) / Guardian"
+              }
+            ],
+            "name": {
+              "family": "Mayfield",
+              "given": [
+                "Sam"
+              ]
+            }
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Patient/MaxineMayfield16"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Condition/MaxineMayfield16ChronicConstipation",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "MaxineMayfield16ChronicConstipation",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Condition_MaxineMayfield16ChronicConstipation\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Condition MaxineMayfield16ChronicConstipation</b></p><a name=\"MaxineMayfield16ChronicConstipation\"> </a><a name=\"hcMaxineMayfield16ChronicConstipation\"> </a><p><b>clinicalStatus</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/condition-clinical active}\">Active</span></p><p><b>category</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/condition-category problem-list-item}\">Problem List Item</span></p><p><b>code</b>: <span title=\"Codes:{http://hl7.org/fhir/sid/icd-10-cm K59.04}, {http://snomed.info/sct 236069009}\">Chronic constipation</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p></div>"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "problem-list-item"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "K59.04",
+              "display": "Chronic idiopathic constipation"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "236069009",
+              "display": "Chronic constipation (disorder)"
+            }
+          ],
+          "text": "Chronic constipation"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "meta": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.580Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/MaxineMayfield16ChronicConstipation"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Condition/MaxineMayfield16Asthma",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "MaxineMayfield16Asthma",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Condition_MaxineMayfield16Asthma\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Condition MaxineMayfield16Asthma</b></p><a name=\"MaxineMayfield16Asthma\"> </a><a name=\"hcMaxineMayfield16Asthma\"> </a><p><b>clinicalStatus</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/condition-clinical active}\">Active</span></p><p><b>category</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/condition-category problem-list-item}\">Problem List Item</span></p><p><b>code</b>: <span title=\"Codes:{http://hl7.org/fhir/sid/icd-10-cm J45.40}, {http://snomed.info/sct 427295004}\">Moderate persistent asthma</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p></div>"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "problem-list-item"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "J45.40",
+              "display": "Moderate persistent asthma, uncomplicated"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "427295004",
+              "display": "Moderate persistent asthma (disorder)"
+            }
+          ],
+          "text": "Moderate persistent asthma"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "meta": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.580Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/MaxineMayfield16Asthma"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Condition/MaxineMayfield16IrregularPeriods",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "MaxineMayfield16IrregularPeriods",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Condition_MaxineMayfield16IrregularPeriods\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Condition MaxineMayfield16IrregularPeriods</b></p><a name=\"MaxineMayfield16IrregularPeriods\"> </a><a name=\"hcMaxineMayfield16IrregularPeriods\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity')</p></div><p><b>clinicalStatus</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/condition-clinical active}\">Active</span></p><p><b>category</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/condition-category problem-list-item}\">Problem List Item</span></p><p><b>code</b>: <span title=\"Codes:{http://hl7.org/fhir/sid/icd-10-cm N92.6}, {http://snomed.info/sct 80182007}\">Irregular periods</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p></div>"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "problem-list-item"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "N92.6",
+              "display": "Irregular menstruation, unspecified"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "80182007",
+              "display": "Irregular periods (finding)"
+            }
+          ],
+          "text": "Irregular periods"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.580Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/MaxineMayfield16IrregularPeriods"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/AllergyIntolerance/MaxineMayfield16AmoxicillinAllergy",
+      "resource": {
+        "resourceType": "AllergyIntolerance",
+        "id": "MaxineMayfield16AmoxicillinAllergy",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"AllergyIntolerance_MaxineMayfield16AmoxicillinAllergy\"> </a><p class=\"res-header-id\"><b>Generated Narrative: AllergyIntolerance MaxineMayfield16AmoxicillinAllergy</b></p><a name=\"MaxineMayfield16AmoxicillinAllergy\"> </a><a name=\"hcMaxineMayfield16AmoxicillinAllergy\"> </a><p><b>clinicalStatus</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical active}\">Active</span></p><p><b>verificationStatus</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/allergyintolerance-verification confirmed}\">Confirmed</span></p><p><b>type</b>: Allergy</p><p><b>category</b>: Medication</p><p><b>code</b>: <span title=\"Codes:{http://www.nlm.nih.gov/research/umls/rxnorm 723}\">Amoxicillin</span></p><p><b>patient</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><h3>Reactions</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Substance</b></td><td><b>Manifestation</b></td><td><b>Severity</b></td></tr><tr><td style=\"display: none\">*</td><td><span title=\"Codes:{http://www.nlm.nih.gov/research/umls/rxnorm 723}\">Amoxicillin</span></td><td><span title=\"Codes:{http://snomed.info/sct 126485001}\">Hives</span></td><td>Mild</td></tr></table></div>"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "verificationStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/allergyintolerance-verification",
+              "code": "confirmed"
+            }
+          ]
+        },
+        "type": "allergy",
+        "category": [
+          "medication"
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "723",
+              "display": "Amoxicillin"
+            }
+          ],
+          "text": "Amoxicillin"
+        },
+        "patient": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "reaction": [
+          {
+            "substance": {
+              "coding": [
+                {
+                  "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                  "code": "723",
+                  "display": "Amoxicillin"
+                }
+              ]
+            },
+            "manifestation": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "126485001",
+                    "display": "Urticaria (disorder)"
+                  }
+                ],
+                "text": "Hives"
+              }
+            ],
+            "severity": "mild"
+          }
+        ],
+        "meta": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.580Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "AllergyIntolerance/MaxineMayfield16AmoxicillinAllergy"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/RelatedPerson/SueHargrove16",
+      "resource": {
+        "resourceType": "RelatedPerson",
+        "id": "SueHargrove16",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"RelatedPerson_SueHargrove16\"> </a><p class=\"res-header-id\"><b>Generated Narrative: RelatedPerson SueHargrove16</b></p><a name=\"SueHargrove16\"> </a><a name=\"hcSueHargrove16\"> </a><p><b>patient</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>relationship</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/v3-RoleCode MTH}\">mother</span></p><p><b>name</b>: Sue Hargrove </p></div>"
+        },
+        "patient": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "relationship": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+                "code": "MTH",
+                "display": "mother"
+              }
+            ]
+          }
+        ],
+        "name": [
+          {
+            "family": "Hargrove",
+            "given": [
+              "Sue"
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "RelatedPerson/SueHargrove16"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/RelatedPerson/SamMayfield16",
+      "resource": {
+        "resourceType": "RelatedPerson",
+        "id": "SamMayfield16",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"RelatedPerson_SamMayfield16\"> </a><p class=\"res-header-id\"><b>Generated Narrative: RelatedPerson SamMayfield16</b></p><a name=\"SamMayfield16\"> </a><a name=\"hcSamMayfield16\"> </a><p><b>patient</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>relationship</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/v3-RoleCode FTH}\">father</span></p><p><b>name</b>: Sam Mayfield </p></div>"
+        },
+        "patient": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "relationship": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+                "code": "FTH",
+                "display": "father"
+              }
+            ]
+          }
+        ],
+        "name": [
+          {
+            "family": "Mayfield",
+            "given": [
+              "Sam"
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "RelatedPerson/SamMayfield16"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Practitioner/MaxineMayfieldDoctor",
+      "resource": {
+        "resourceType": "Practitioner",
+        "id": "MaxineMayfieldDoctor",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Practitioner_MaxineMayfieldDoctor\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Practitioner MaxineMayfieldDoctor</b></p><a name=\"MaxineMayfieldDoctor\"> </a><a name=\"hcMaxineMayfieldDoctor\"> </a><p><b>name</b>: Jane Hibbert </p></div>"
+        },
+        "name": [
+          {
+            "family": "Hibbert",
+            "given": [
+              "Jane"
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Practitioner/MaxineMayfieldDoctor"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Encounter/MaxineMayfield16EncMAPrenatalEval",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "MaxineMayfield16EncMAPrenatalEval",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Encounter_MaxineMayfield16EncMAPrenatalEval\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Encounter MaxineMayfield16EncMAPrenatalEval</b></p><a name=\"MaxineMayfield16EncMAPrenatalEval\"> </a><a name=\"hcMaxineMayfield16EncMAPrenatalEval\"> </a><p><b>status</b>: Finished</p><p><b>class</b>: <a href=\"http://terminology.hl7.org/7.1.0/CodeSystem-v3-ActCode.html#v3-ActCode-AMB\">ActCode: AMB</a> (ambulatory)</p><p><b>type</b>: <span title=\"Codes:\">Prenatal evaluation visit</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>period</b>: 2024-07-18 --&gt; 2024-07-18</p><h3>Diagnoses</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Condition</b></td></tr><tr><td style=\"display: none\">*</td><td><a href=\"Condition-MaxineMayfield16DandCAbortion.html\">Condition Encounter for elective termination of pregnancy</a></td></tr></table><p><b>serviceProvider</b>: MA Community Health Center</p></div>"
+        },
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Prenatal evaluation visit"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "period": {
+          "start": "2024-07-18",
+          "end": "2024-07-18"
+        },
+        "diagnosis": [
+          {
+            "condition": {
+              "reference": "Condition/MaxineMayfield16DandCAbortion"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "display": "MA Community Health Center"
+        },
+        "meta": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.582Z"
+            }
+          ],
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "GDIS",
+              "display": "GDIS"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/MaxineMayfield16EncMAPrenatalEval"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Observation/MaxineMayfield16POChCG",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "MaxineMayfield16POChCG",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Observation_MaxineMayfield16POChCG\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Observation MaxineMayfield16POChCG</b></p><a name=\"MaxineMayfield16POChCG\"> </a><a name=\"hcMaxineMayfield16POChCG\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity'), ABORTION (Details: extraSensitivityCodes code ABORTION)</p></div><p><b>status</b>: Final</p><p><b>category</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/observation-category laboratory}\">Laboratory</span></p><p><b>code</b>: <span title=\"Codes:{http://loinc.org 2106-3}\">POC hCG (urine pregnancy test)</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMAPrenatalEval.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2024-07-18 --&gt; 2024-07-18</a></p><p><b>effective</b>: 2024-07-18</p><p><b>performer</b>: <a href=\"Practitioner-MaxineMayfieldDoctor.html\">Practitioner Jane Hibbert </a></p><p><b>value</b>: <span title=\"Codes:{http://snomed.info/sct 10828004}\">Positive</span></p></div>"
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "2106-3",
+              "display": "Choriogonadotropin [Presence] in Urine"
+            }
+          ],
+          "text": "POC hCG (urine pregnancy test)"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMAPrenatalEval"
+        },
+        "effectiveDateTime": "2024-07-18",
+        "performer": [
+          {
+            "reference": "Practitioner/MaxineMayfieldDoctor"
+          }
+        ],
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "10828004",
+              "display": "Positive (qualifier value)"
+            }
+          ],
+          "text": "Positive"
+        },
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.580Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/MaxineMayfield16POChCG"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Observation/MaxineMayfield16hCGSerumQuantDandC",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "MaxineMayfield16hCGSerumQuantDandC",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Observation_MaxineMayfield16hCGSerumQuantDandC\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Observation MaxineMayfield16hCGSerumQuantDandC</b></p><a name=\"MaxineMayfield16hCGSerumQuantDandC\"> </a><a name=\"hcMaxineMayfield16hCGSerumQuantDandC\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity'), ABORTION (Details: extraSensitivityCodes code ABORTION)</p></div><p><b>status</b>: Final</p><p><b>category</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/observation-category laboratory}\">Laboratory</span></p><p><b>code</b>: <span title=\"Codes:{http://loinc.org 19080-1}\">hCG serum quantitative</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMAPrenatalEval.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2024-07-18 --&gt; 2024-07-18</a></p><p><b>effective</b>: 2024-07-18</p><p><b>performer</b>: <a href=\"Practitioner-MaxineMayfieldDoctor.html\">Practitioner Jane Hibbert </a></p><p><b>value</b>: 85000 IU/L<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM  code[IU]/L = '[IU]/L')</span></p></div>"
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "19080-1",
+              "display": "Choriogonadotropin [Units/volume] in Serum or Plasma"
+            }
+          ],
+          "text": "hCG serum quantitative"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMAPrenatalEval"
+        },
+        "effectiveDateTime": "2024-07-18",
+        "performer": [
+          {
+            "reference": "Practitioner/MaxineMayfieldDoctor"
+          }
+        ],
+        "valueQuantity": {
+          "value": 85000,
+          "unit": "IU/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "[IU]/L"
+        },
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/MaxineMayfield16hCGSerumQuantDandC"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/DiagnosticReport/MaxineMayfield16FirstTrimesterUS",
+      "resource": {
+        "resourceType": "DiagnosticReport",
+        "id": "MaxineMayfield16FirstTrimesterUS",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"DiagnosticReport_MaxineMayfield16FirstTrimesterUS\"> </a><p class=\"res-header-id\"><b>Generated Narrative: DiagnosticReport MaxineMayfield16FirstTrimesterUS</b></p><a name=\"MaxineMayfield16FirstTrimesterUS\"> </a><a name=\"hcMaxineMayfield16FirstTrimesterUS\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity')</p></div><h2><span title=\"Codes:{http://www.ama-assn.org/go/cpt 76801}\">First trimester ultrasound</span> (<span title=\"Codes:{http://terminology.hl7.org/CodeSystem/v2-0074 RAD}\">Radiology</span>) </h2><table class=\"grid\"><tr><td>Subject</td><td>Maxine Mayfield (official) Female, DoB: 2009-07-18</td></tr><tr><td>When For</td><td>2024-07-18</td></tr></table><p><b>Report Details</b></p></div>"
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+                "code": "RAD",
+                "display": "Radiology"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "76801",
+              "display": "Ultrasound, pregnant uterus, real time with image documentation, fetal and maternal evaluation, first trimester (< 14 weeks 0 days), transabdominal approach; single or first gestation"
+            }
+          ],
+          "text": "First trimester ultrasound"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMAPrenatalEval"
+        },
+        "effectiveDateTime": "2024-07-18",
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DiagnosticReport/MaxineMayfield16FirstTrimesterUS"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/DiagnosticReport/MaxineMayfield16QuadScreen",
+      "resource": {
+        "resourceType": "DiagnosticReport",
+        "id": "MaxineMayfield16QuadScreen",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"DiagnosticReport_MaxineMayfield16QuadScreen\"> </a><p class=\"res-header-id\"><b>Generated Narrative: DiagnosticReport MaxineMayfield16QuadScreen</b></p><a name=\"MaxineMayfield16QuadScreen\"> </a><a name=\"hcMaxineMayfield16QuadScreen\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity'), genetic disease information sensitivity (Details: ActCode code GDIS = 'genetic disease information sensitivity')</p></div><h2><span title=\"Codes:{http://loinc.org 48800-7}\">Quad screen</span> (<span title=\"Codes:{http://terminology.hl7.org/CodeSystem/v2-0074 LAB}\">Laboratory</span>) </h2><table class=\"grid\"><tr><td>Subject</td><td>Maxine Mayfield (official) Female, DoB: 2009-07-18</td></tr><tr><td>When For</td><td>2024-08-18</td></tr></table><p><b>Report Details</b></p></div>"
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+                "code": "LAB",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "48800-7",
+              "display": "Second trimester quad maternal screen panel - Serum or Plasma"
+            }
+          ],
+          "text": "Quad screen"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMAPrenatalEval"
+        },
+        "effectiveDateTime": "2024-08-18",
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "GDIS",
+              "display": "GDIS"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DiagnosticReport/MaxineMayfield16QuadScreen"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Observation/MaxineMayfield16OBHx",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "MaxineMayfield16OBHx",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Observation_MaxineMayfield16OBHx\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Observation MaxineMayfield16OBHx</b></p><a name=\"MaxineMayfield16OBHx\"> </a><a name=\"hcMaxineMayfield16OBHx\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity')</p></div><p><b>status</b>: Final</p><p><b>code</b>: <span title=\"Codes:{http://snomed.info/sct 364324000}\">OB History G1P0010</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMAPrenatalEval.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2024-07-18 --&gt; 2024-07-18</a></p><p><b>effective</b>: 2024-07-18</p><p><b>performer</b>: <a href=\"Practitioner-MaxineMayfieldDoctor.html\">Practitioner Jane Hibbert </a></p><p><b>value</b>: G1P0010</p><blockquote><p><b>component</b></p><p><b>code</b>: <span title=\"Codes:{http://snomed.info/sct 440425000}\">Number of births at term (observable entity)</span></p><p><b>value</b>: 0</p></blockquote><blockquote><p><b>component</b></p><p><b>code</b>: <span title=\"Codes:{http://snomed.info/sct 440013005}\">Number of preterm births (observable entity)</span></p><p><b>value</b>: 0</p></blockquote><blockquote><p><b>component</b></p><p><b>code</b>: <span title=\"Codes:{http://snomed.info/sct 252113007}\">Number of abortions (observable entity)</span></p><p><b>value</b>: 1</p></blockquote><blockquote><p><b>component</b></p><p><b>code</b>: <span title=\"Codes:{http://snomed.info/sct 248991006}\">Number of live deliveries (observable entity)</span></p><p><b>value</b>: 0</p></blockquote></div>"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "364324000",
+              "display": "Measure of pregnancy (observable entity)"
+            }
+          ],
+          "text": "OB History G1P0010"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMAPrenatalEval"
+        },
+        "effectiveDateTime": "2024-07-18",
+        "performer": [
+          {
+            "reference": "Practitioner/MaxineMayfieldDoctor"
+          }
+        ],
+        "valueString": "G1P0010",
+        "component": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "440425000",
+                  "display": "Number of births at term (observable entity)"
+                }
+              ]
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "440013005",
+                  "display": "Number of preterm births (observable entity)"
+                }
+              ]
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "252113007",
+                  "display": "Number of abortions (observable entity)"
+                }
+              ]
+            },
+            "valueInteger": 1
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "248991006",
+                  "display": "Number of live deliveries (observable entity)"
+                }
+              ]
+            },
+            "valueInteger": 0
+          }
+        ],
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/MaxineMayfield16OBHx"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Encounter/MaxineMayfield16EncMADandCProcedure",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "MaxineMayfield16EncMADandCProcedure",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Encounter_MaxineMayfield16EncMADandCProcedure\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Encounter MaxineMayfield16EncMADandCProcedure</b></p><a name=\"MaxineMayfield16EncMADandCProcedure\"> </a><a name=\"hcMaxineMayfield16EncMADandCProcedure\"> </a><p><b>status</b>: Finished</p><p><b>class</b>: <a href=\"http://terminology.hl7.org/7.1.0/CodeSystem-v3-ActCode.html#v3-ActCode-AMB\">ActCode: AMB</a> (ambulatory)</p><p><b>type</b>: <span title=\"Codes:\">D&amp;C procedure visit</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>period</b>: 2024-09-18 --&gt; 2024-09-18</p><h3>Diagnoses</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Condition</b></td></tr><tr><td style=\"display: none\">*</td><td><a href=\"Condition-MaxineMayfield16DandCAbortion.html\">Condition Encounter for elective termination of pregnancy</a></td></tr></table><p><b>serviceProvider</b>: MA Community Health Center</p></div>"
+        },
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "D&C procedure visit"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "period": {
+          "start": "2024-09-18",
+          "end": "2024-09-18"
+        },
+        "diagnosis": [
+          {
+            "condition": {
+              "reference": "Condition/MaxineMayfield16DandCAbortion"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "display": "MA Community Health Center"
+        },
+        "meta": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.582Z"
+            }
+          ],
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            },
+            {
+              "system": "http://SHIFT-Task-Force.github.io/SLS-ValueSets/CodeSystem/extraSensitivityCodes",
+              "code": "ABORTION",
+              "display": "ABORTION"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/MaxineMayfield16EncMADandCProcedure"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Condition/MaxineMayfield16DandCAbortion",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "MaxineMayfield16DandCAbortion",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Condition_MaxineMayfield16DandCAbortion\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Condition MaxineMayfield16DandCAbortion</b></p><a name=\"MaxineMayfield16DandCAbortion\"> </a><a name=\"hcMaxineMayfield16DandCAbortion\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity'), ABORTION (Details: extraSensitivityCodes code ABORTION)</p></div><p><b>clinicalStatus</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/condition-clinical resolved}\">Resolved</span></p><p><b>category</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/condition-category encounter-diagnosis}\">Encounter Diagnosis</span></p><p><b>code</b>: <span title=\"Codes:{http://hl7.org/fhir/sid/icd-10-cm Z33.2}, {http://snomed.info/sct 18391007}\">D&amp;C age 15: Encounter for elective termination of pregnancy</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>recordedDate</b>: 2024-09-18</p></div>"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "resolved"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "Z33.2",
+              "display": "Encounter for elective termination of pregnancy"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "18391007",
+              "display": "Elective abortion (disorder)"
+            }
+          ],
+          "text": "D&C age 15: Encounter for elective termination of pregnancy"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "recordedDate": "2024-09-18",
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            },
+            {
+              "system": "http://SHIFT-Task-Force.github.io/SLS-ValueSets/CodeSystem/extraSensitivityCodes",
+              "code": "ABORTION",
+              "display": "ABORTION"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/MaxineMayfield16DandCAbortion"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Procedure/MaxineMayfield16DandCProcedure",
+      "resource": {
+        "resourceType": "Procedure",
+        "id": "MaxineMayfield16DandCProcedure",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Procedure_MaxineMayfield16DandCProcedure\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Procedure MaxineMayfield16DandCProcedure</b></p><a name=\"MaxineMayfield16DandCProcedure\"> </a><a name=\"hcMaxineMayfield16DandCProcedure\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity'), ABORTION (Details: extraSensitivityCodes code ABORTION)</p></div><p><b>status</b>: Completed</p><p><b>code</b>: <span title=\"Codes:{http://www.ama-assn.org/go/cpt 59840}, {http://www.cms.gov/Medicare/Coding/HCPCSReleaseCodeSets S2260}\">Dilatation and Curettage, uterus, for therapeutic Abortion</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMADandCProcedure.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2024-09-18 --&gt; 2024-09-18</a></p><p><b>performed</b>: 2024-09-18</p></div>"
+        },
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "59840",
+              "display": "Induced abortion, by dilation and curettage"
+            },
+            {
+              "system": "http://www.cms.gov/Medicare/Coding/HCPCSReleaseCodeSets",
+              "code": "S2260",
+              "display": "Induced abortion 17-24 weeks"
+            }
+          ],
+          "text": "Dilatation and Curettage, uterus, for therapeutic Abortion"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMADandCProcedure"
+        },
+        "performedDateTime": "2024-09-18",
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            },
+            {
+              "system": "http://SHIFT-Task-Force.github.io/SLS-ValueSets/CodeSystem/extraSensitivityCodes",
+              "code": "ABORTION",
+              "display": "ABORTION"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Procedure/MaxineMayfield16DandCProcedure"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Encounter/MaxineMayfield16EncMAMedicalAbortion",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "MaxineMayfield16EncMAMedicalAbortion",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Encounter_MaxineMayfield16EncMAMedicalAbortion\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Encounter MaxineMayfield16EncMAMedicalAbortion</b></p><a name=\"MaxineMayfield16EncMAMedicalAbortion\"> </a><a name=\"hcMaxineMayfield16EncMAMedicalAbortion\"> </a><p><b>status</b>: Finished</p><p><b>class</b>: <a href=\"http://terminology.hl7.org/7.1.0/CodeSystem-v3-ActCode.html#v3-ActCode-AMB\">ActCode: AMB</a> (ambulatory)</p><p><b>type</b>: <span title=\"Codes:\">Medical abortion visit</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>period</b>: 2025-12-18 --&gt; 2025-12-18</p><h3>Diagnoses</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Condition</b></td></tr><tr><td style=\"display: none\">*</td><td><a href=\"Condition-MaxineMayfield16MedicalAbortion.html\">Condition Encounter for elective termination of pregnancy</a></td></tr></table><p><b>serviceProvider</b>: MA Community Health Center</p></div>"
+        },
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "Medical abortion visit"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "period": {
+          "start": "2025-12-18",
+          "end": "2025-12-18"
+        },
+        "diagnosis": [
+          {
+            "condition": {
+              "reference": "Condition/MaxineMayfield16MedicalAbortion"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "display": "MA Community Health Center"
+        },
+        "meta": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.582Z"
+            }
+          ],
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            },
+            {
+              "system": "http://SHIFT-Task-Force.github.io/SLS-ValueSets/CodeSystem/extraSensitivityCodes",
+              "code": "ABORTION",
+              "display": "ABORTION"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/MaxineMayfield16EncMAMedicalAbortion"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Observation/MaxineMayfield16hCGSerumQuantMedAbort",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "MaxineMayfield16hCGSerumQuantMedAbort",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Observation_MaxineMayfield16hCGSerumQuantMedAbort\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Observation MaxineMayfield16hCGSerumQuantMedAbort</b></p><a name=\"MaxineMayfield16hCGSerumQuantMedAbort\"> </a><a name=\"hcMaxineMayfield16hCGSerumQuantMedAbort\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity'), ABORTION (Details: extraSensitivityCodes code ABORTION)</p></div><p><b>status</b>: Final</p><p><b>category</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/observation-category laboratory}\">Laboratory</span></p><p><b>code</b>: <span title=\"Codes:{http://loinc.org 19080-1}\">hCG serum quantitative</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMAMedicalAbortion.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2025-12-18 --&gt; 2025-12-18</a></p><p><b>effective</b>: 2025-11-18</p><p><b>performer</b>: <a href=\"Practitioner-MaxineMayfieldDoctor.html\">Practitioner Jane Hibbert </a></p><p><b>value</b>: 22000 IU/L<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM  code[IU]/L = '[IU]/L')</span></p></div>"
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "19080-1",
+              "display": "Choriogonadotropin [Units/volume] in Serum or Plasma"
+            }
+          ],
+          "text": "hCG serum quantitative"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMAMedicalAbortion"
+        },
+        "effectiveDateTime": "2025-11-18",
+        "performer": [
+          {
+            "reference": "Practitioner/MaxineMayfieldDoctor"
+          }
+        ],
+        "valueQuantity": {
+          "value": 22000,
+          "unit": "IU/L",
+          "system": "http://unitsofmeasure.org",
+          "code": "[IU]/L"
+        },
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/MaxineMayfield16hCGSerumQuantMedAbort"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Condition/MaxineMayfield16MedicalAbortion",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "MaxineMayfield16MedicalAbortion",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Condition_MaxineMayfield16MedicalAbortion\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Condition MaxineMayfield16MedicalAbortion</b></p><a name=\"MaxineMayfield16MedicalAbortion\"> </a><a name=\"hcMaxineMayfield16MedicalAbortion\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity'), ABORTION (Details: extraSensitivityCodes code ABORTION)</p></div><p><b>clinicalStatus</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/condition-clinical resolved}\">Resolved</span></p><p><b>category</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/condition-category encounter-diagnosis}\">Encounter Diagnosis</span></p><p><b>code</b>: <span title=\"Codes:{http://hl7.org/fhir/sid/icd-10-cm Z33.2}, {http://snomed.info/sct 18391007}\">Medical Abortion age 16: Encounter for elective termination of pregnancy</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>recordedDate</b>: 2025-12-18</p></div>"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "resolved"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "Z33.2",
+              "display": "Encounter for elective termination of pregnancy"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "18391007",
+              "display": "Elective abortion (disorder)"
+            }
+          ],
+          "text": "Medical Abortion age 16: Encounter for elective termination of pregnancy"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "recordedDate": "2025-12-18",
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            },
+            {
+              "system": "http://SHIFT-Task-Force.github.io/SLS-ValueSets/CodeSystem/extraSensitivityCodes",
+              "code": "ABORTION",
+              "display": "ABORTION"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/MaxineMayfield16MedicalAbortion"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/MedicationRequest/MaxineMayfield16Mifepristone",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "MaxineMayfield16Mifepristone",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"MedicationRequest_MaxineMayfield16Mifepristone\"> </a><p class=\"res-header-id\"><b>Generated Narrative: MedicationRequest MaxineMayfield16Mifepristone</b></p><a name=\"MaxineMayfield16Mifepristone\"> </a><a name=\"hcMaxineMayfield16Mifepristone\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity'), ABORTION (Details: extraSensitivityCodes code ABORTION)</p></div><p><b>status</b>: Completed</p><p><b>intent</b>: Order</p><p><b>medication</b>: <span title=\"Codes:{http://www.nlm.nih.gov/research/umls/rxnorm 330381}\">Mifepristone 200mg PO x1</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMAMedicalAbortion.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2025-12-18 --&gt; 2025-12-18</a></p><blockquote><p><b>dosageInstruction</b></p><p><b>text</b>: 200mg PO x1</p><p><b>timing</b>: Count 1  times, Once per 1 day</p><p><b>route</b>: <span title=\"Codes:{http://snomed.info/sct 26643006}\">Oral route</span></p><h3>DoseAndRates</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Dose[x]</b></td></tr><tr><td style=\"display: none\">*</td><td>200 mg<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM  codemg = 'mg')</span></td></tr></table></blockquote></div>"
+        },
+        "status": "completed",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "330381",
+              "display": "mifepristone 200 MG"
+            }
+          ],
+          "text": "Mifepristone 200mg PO x1"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMAMedicalAbortion"
+        },
+        "dosageInstruction": [
+          {
+            "text": "200mg PO x1",
+            "timing": {
+              "repeat": {
+                "count": 1,
+                "frequency": 1,
+                "period": 1,
+                "periodUnit": "d"
+              }
+            },
+            "route": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "26643006",
+                  "display": "Oral route"
+                }
+              ]
+            },
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 200,
+                  "unit": "mg",
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                }
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            },
+            {
+              "system": "http://SHIFT-Task-Force.github.io/SLS-ValueSets/CodeSystem/extraSensitivityCodes",
+              "code": "ABORTION",
+              "display": "ABORTION"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "MedicationRequest/MaxineMayfield16Mifepristone"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/MedicationRequest/MaxineMayfield16Misoprostol",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "MaxineMayfield16Misoprostol",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"MedicationRequest_MaxineMayfield16Misoprostol\"> </a><p class=\"res-header-id\"><b>Generated Narrative: MedicationRequest MaxineMayfield16Misoprostol</b></p><a name=\"MaxineMayfield16Misoprostol\"> </a><a name=\"hcMaxineMayfield16Misoprostol\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity'), ABORTION (Details: extraSensitivityCodes code ABORTION)</p></div><p><b>status</b>: Completed</p><p><b>intent</b>: Order</p><p><b>medication</b>: <span title=\"Codes:{http://www.nlm.nih.gov/research/umls/rxnorm 317128}\">Misoprostol 200mcg take 4 tabs BUC 24-48h after mifepristone x1</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMAMedicalAbortion.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2025-12-18 --&gt; 2025-12-18</a></p><blockquote><p><b>dosageInstruction</b></p><p><b>text</b>: 200mcg take 4 tabs buccally 24-48h after mifepristone x1</p><p><b>timing</b>: Count 1  times, Once per 1 day</p><p><b>route</b>: <span title=\"Codes:{http://snomed.info/sct 54471007}\">Buccal route</span></p><h3>DoseAndRates</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Dose[x]</b></td></tr><tr><td style=\"display: none\">*</td><td>800 ug<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM  codeug = 'ug')</span></td></tr></table></blockquote></div>"
+        },
+        "status": "completed",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "317128",
+              "display": "misoprostol 0.2 MG Oral Tablet"
+            }
+          ],
+          "text": "Misoprostol 200mcg take 4 tabs BUC 24-48h after mifepristone x1"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMAMedicalAbortion"
+        },
+        "dosageInstruction": [
+          {
+            "text": "200mcg take 4 tabs buccally 24-48h after mifepristone x1",
+            "timing": {
+              "repeat": {
+                "count": 1,
+                "frequency": 1,
+                "period": 1,
+                "periodUnit": "d"
+              }
+            },
+            "route": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "54471007",
+                  "display": "Buccal route"
+                }
+              ]
+            },
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 800,
+                  "unit": "ug",
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ug"
+                }
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            },
+            {
+              "system": "http://SHIFT-Task-Force.github.io/SLS-ValueSets/CodeSystem/extraSensitivityCodes",
+              "code": "ABORTION",
+              "display": "ABORTION"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "MedicationRequest/MaxineMayfield16Misoprostol"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Encounter/MaxineMayfield16EncMASTI",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "MaxineMayfield16EncMASTI",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Encounter_MaxineMayfield16EncMASTI\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Encounter MaxineMayfield16EncMASTI</b></p><a name=\"MaxineMayfield16EncMASTI\"> </a><a name=\"hcMaxineMayfield16EncMASTI\"> </a><p><b>status</b>: Finished</p><p><b>class</b>: <a href=\"http://terminology.hl7.org/7.1.0/CodeSystem-v3-ActCode.html#v3-ActCode-AMB\">ActCode: AMB</a> (ambulatory)</p><p><b>type</b>: <span title=\"Codes:\">STI evaluation visit</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>period</b>: 2026-04-17 --&gt; 2026-04-17</p><h3>Diagnoses</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Condition</b></td></tr><tr><td style=\"display: none\">*</td><td><a href=\"Condition-MaxineMayfield16Chlamydia.html\">Condition Chlamydial infection of genitourinary tract, unspecified</a></td></tr></table><p><b>serviceProvider</b>: MA Community Health Center</p></div>"
+        },
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "type": [
+          {
+            "text": "STI evaluation visit"
+          }
+        ],
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "period": {
+          "start": "2026-04-17",
+          "end": "2026-04-17"
+        },
+        "diagnosis": [
+          {
+            "condition": {
+              "reference": "Condition/MaxineMayfield16Chlamydia"
+            }
+          }
+        ],
+        "serviceProvider": {
+          "display": "MA Community Health Center"
+        },
+        "meta": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.582Z"
+            }
+          ],
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "STD",
+              "display": "STD"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "HIV",
+              "display": "HIV"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Encounter/MaxineMayfield16EncMASTI"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Condition/MaxineMayfield16Chlamydia",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "MaxineMayfield16Chlamydia",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Condition_MaxineMayfield16Chlamydia\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Condition MaxineMayfield16Chlamydia</b></p><a name=\"MaxineMayfield16Chlamydia\"> </a><a name=\"hcMaxineMayfield16Chlamydia\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexually transmitted disease information sensitivity (Details: ActCode code STD = 'sexually transmitted disease information sensitivity')</p></div><p><b>clinicalStatus</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/condition-clinical active}\">Active</span></p><p><b>category</b>: <span title=\"Codes:{http://terminology.hl7.org/CodeSystem/condition-category encounter-diagnosis}\">Encounter Diagnosis</span></p><p><b>code</b>: <span title=\"Codes:{http://hl7.org/fhir/sid/icd-10-cm A56.2}, {http://snomed.info/sct 428015005}\">Chlamydia infection of GU tract</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>recordedDate</b>: 2026-04-17</p></div>"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "code": "encounter-diagnosis"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "A56.2",
+              "display": "Chlamydial infection of genitourinary tract, unspecified"
+            },
+            {
+              "system": "http://snomed.info/sct",
+              "code": "428015005",
+              "display": "Chlamydia trachomatis infection of genital structure (disorder)"
+            }
+          ],
+          "text": "Chlamydia infection of GU tract"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "recordedDate": "2026-04-17",
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "STD",
+              "display": "STD"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Condition/MaxineMayfield16Chlamydia"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/DiagnosticReport/MaxineMayfield16GCNAAT",
+      "resource": {
+        "resourceType": "DiagnosticReport",
+        "id": "MaxineMayfield16GCNAAT",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"DiagnosticReport_MaxineMayfield16GCNAAT\"> </a><p class=\"res-header-id\"><b>Generated Narrative: DiagnosticReport MaxineMayfield16GCNAAT</b></p><a name=\"MaxineMayfield16GCNAAT\"> </a><a name=\"hcMaxineMayfield16GCNAAT\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexually transmitted disease information sensitivity (Details: ActCode code STD = 'sexually transmitted disease information sensitivity')</p></div><h2><span title=\"Codes:{http://loinc.org 92684-0}\">Gonorrhea/chlamydia urine NAAT panel</span> (<span title=\"Codes:{http://terminology.hl7.org/CodeSystem/v2-0074 LAB}\">Laboratory</span>) </h2><table class=\"grid\"><tr><td>Subject</td><td>Maxine Mayfield (official) Female, DoB: 2009-07-18</td></tr><tr><td>When For</td><td>2026-04-17</td></tr></table><p><b>Report Details</b></p><p>GC result negative; CT result positive.</p></div>"
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+                "code": "LAB",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "92684-0",
+              "display": "CT + NG + TV DNA Pnl Ur NAA+probe"
+            }
+          ],
+          "text": "Gonorrhea/chlamydia urine NAAT panel"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMASTI"
+        },
+        "effectiveDateTime": "2026-04-17",
+        "conclusion": "GC result negative; CT result positive.",
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "STD",
+              "display": "STD"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DiagnosticReport/MaxineMayfield16GCNAAT"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/DiagnosticReport/MaxineMayfield16HIVELISA",
+      "resource": {
+        "resourceType": "DiagnosticReport",
+        "id": "MaxineMayfield16HIVELISA",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"DiagnosticReport_MaxineMayfield16HIVELISA\"> </a><p class=\"res-header-id\"><b>Generated Narrative: DiagnosticReport MaxineMayfield16HIVELISA</b></p><a name=\"MaxineMayfield16HIVELISA\"> </a><a name=\"hcMaxineMayfield16HIVELISA\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), HIV/AIDS information sensitivity (Details: ActCode code HIV = 'HIV/AIDS information sensitivity')</p></div><h2><span title=\"Codes:{http://loinc.org 80203-3}\">HIV ELISA with reflex Western blot</span> (<span title=\"Codes:{http://terminology.hl7.org/CodeSystem/v2-0074 LAB}\">Laboratory</span>) </h2><table class=\"grid\"><tr><td>Subject</td><td>Maxine Mayfield (official) Female, DoB: 2009-07-18</td></tr><tr><td>When For</td><td>2026-04-17</td></tr></table><p><b>Report Details</b></p><p>HIV negative.</p></div>"
+        },
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+                "code": "LAB",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "80203-3",
+              "display": "HIV 1 & 2 Ab SerPlBld IA.rapid"
+            }
+          ],
+          "text": "HIV ELISA with reflex Western blot"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMASTI"
+        },
+        "effectiveDateTime": "2026-04-17",
+        "conclusion": "HIV negative.",
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "HIV",
+              "display": "HIV"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "DiagnosticReport/MaxineMayfield16HIVELISA"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/MedicationRequest/MaxineMayfield16Azithromycin",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "MaxineMayfield16Azithromycin",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"MedicationRequest_MaxineMayfield16Azithromycin\"> </a><p class=\"res-header-id\"><b>Generated Narrative: MedicationRequest MaxineMayfield16Azithromycin</b></p><a name=\"MaxineMayfield16Azithromycin\"> </a><a name=\"hcMaxineMayfield16Azithromycin\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexually transmitted disease information sensitivity (Details: ActCode code STD = 'sexually transmitted disease information sensitivity')</p></div><p><b>status</b>: Completed</p><p><b>intent</b>: Order</p><p><b>medication</b>: <span title=\"Codes:{http://www.nlm.nih.gov/research/umls/rxnorm 330623}\">Azithromycin 500mg 2 tabs x 1</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMASTI.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2026-04-17 --&gt; 2026-04-17</a></p><blockquote><p><b>dosageInstruction</b></p><p><b>text</b>: 500mg 2 tabs x 1 dose</p><p><b>timing</b>: Count 1  times, Once per 1 day</p><p><b>route</b>: <span title=\"Codes:{http://snomed.info/sct 26643006}\">Oral route</span></p><h3>DoseAndRates</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Dose[x]</b></td></tr><tr><td style=\"display: none\">*</td><td>1000 mg<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM  codemg = 'mg')</span></td></tr></table></blockquote></div>"
+        },
+        "status": "completed",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "330623",
+              "display": "azithromycin 500 MG"
+            }
+          ],
+          "text": "Azithromycin 500mg 2 tabs x 1"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMASTI"
+        },
+        "dosageInstruction": [
+          {
+            "text": "500mg 2 tabs x 1 dose",
+            "timing": {
+              "repeat": {
+                "count": 1,
+                "frequency": 1,
+                "period": 1,
+                "periodUnit": "d"
+              }
+            },
+            "route": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "26643006",
+                  "display": "Oral route"
+                }
+              ]
+            },
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 1000,
+                  "unit": "mg",
+                  "system": "http://unitsofmeasure.org",
+                  "code": "mg"
+                }
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "STD",
+              "display": "STD"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "MedicationRequest/MaxineMayfield16Azithromycin"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/MedicationRequest/MaxineMayfield16Descovy",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "MaxineMayfield16Descovy",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"MedicationRequest_MaxineMayfield16Descovy\"> </a><p class=\"res-header-id\"><b>Generated Narrative: MedicationRequest MaxineMayfield16Descovy</b></p><a name=\"MaxineMayfield16Descovy\"> </a><a name=\"hcMaxineMayfield16Descovy\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), HIV/AIDS information sensitivity (Details: ActCode code HIV = 'HIV/AIDS information sensitivity')</p></div><p><b>status</b>: Active</p><p><b>intent</b>: Order</p><p><b>medication</b>: <span title=\"Codes:{http://www.nlm.nih.gov/research/umls/rxnorm 1747692}\">Descovy (tenofovir alafenamide 25mg and emtricitabine 200mg) one tablet PO daily</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMASTI.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2026-04-17 --&gt; 2026-04-17</a></p><blockquote><p><b>dosageInstruction</b></p><p><b>text</b>: one tablet PO daily</p><p><b>timing</b>: Once per 1 day</p><p><b>route</b>: <span title=\"Codes:{http://snomed.info/sct 26643006}\">Oral route</span></p><h3>DoseAndRates</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Dose[x]</b></td></tr><tr><td style=\"display: none\">*</td><td>1 tablet<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM  code1 = '1')</span></td></tr></table></blockquote></div>"
+        },
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "1747692",
+              "display": "Descovy"
+            }
+          ],
+          "text": "Descovy (tenofovir alafenamide 25mg and emtricitabine 200mg) one tablet PO daily"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMASTI"
+        },
+        "dosageInstruction": [
+          {
+            "text": "one tablet PO daily",
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1,
+                "periodUnit": "d"
+              }
+            },
+            "route": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "26643006",
+                  "display": "Oral route"
+                }
+              ]
+            },
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 1,
+                  "unit": "tablet",
+                  "system": "http://unitsofmeasure.org",
+                  "code": "1"
+                }
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "HIV",
+              "display": "HIV"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "MedicationRequest/MaxineMayfield16Descovy"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/MedicationRequest/MaxineMayfield16Loestrin",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "MaxineMayfield16Loestrin",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"MedicationRequest_MaxineMayfield16Loestrin\"> </a><p class=\"res-header-id\"><b>Generated Narrative: MedicationRequest MaxineMayfield16Loestrin</b></p><a name=\"MaxineMayfield16Loestrin\"> </a><a name=\"hcMaxineMayfield16Loestrin\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity')</p></div><p><b>status</b>: Active</p><p><b>intent</b>: Order</p><p><b>medication</b>: <span title=\"Codes:{http://www.nlm.nih.gov/research/umls/rxnorm 1359031}\">Loestrin 1.5/30 (norethindrone acetate 1.5mg / ethinyl estradiol 0.03mg) 1 tab PO daily</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMASTI.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2026-04-17 --&gt; 2026-04-17</a></p><blockquote><p><b>dosageInstruction</b></p><p><b>text</b>: 1 tab PO daily</p><p><b>timing</b>: Once per 1 day</p><p><b>route</b>: <span title=\"Codes:{http://snomed.info/sct 26643006}\">Oral route</span></p><h3>DoseAndRates</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Dose[x]</b></td></tr><tr><td style=\"display: none\">*</td><td>1 tablet<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM  code1 = '1')</span></td></tr></table></blockquote></div>"
+        },
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "1359031",
+              "display": "LOESTRIN 1.5/30 21 Day Pack"
+            }
+          ],
+          "text": "Loestrin 1.5/30 (norethindrone acetate 1.5mg / ethinyl estradiol 0.03mg) 1 tab PO daily"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMASTI"
+        },
+        "dosageInstruction": [
+          {
+            "text": "1 tab PO daily",
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1,
+                "periodUnit": "d"
+              }
+            },
+            "route": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "26643006",
+                  "display": "Oral route"
+                }
+              ]
+            },
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 1,
+                  "unit": "tablet",
+                  "system": "http://unitsofmeasure.org",
+                  "code": "1"
+                }
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.581Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "MedicationRequest/MaxineMayfield16Loestrin"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/MedicationRequest/MaxineMayfield16Miralax",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "MaxineMayfield16Miralax",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"MedicationRequest_MaxineMayfield16Miralax\"> </a><p class=\"res-header-id\"><b>Generated Narrative: MedicationRequest MaxineMayfield16Miralax</b></p><a name=\"MaxineMayfield16Miralax\"> </a><a name=\"hcMaxineMayfield16Miralax\"> </a><p><b>status</b>: Active</p><p><b>intent</b>: Order</p><p><b>medication</b>: <span title=\"Codes:{http://www.nlm.nih.gov/research/umls/rxnorm 876195}\">Miralax 17g PO daily</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMASTI.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2026-04-17 --&gt; 2026-04-17</a></p><blockquote><p><b>dosageInstruction</b></p><p><b>text</b>: 17g PO daily</p><p><b>timing</b>: Once per 1 day</p><p><b>route</b>: <span title=\"Codes:{http://snomed.info/sct 26643006}\">Oral route</span></p><h3>DoseAndRates</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Dose[x]</b></td></tr><tr><td style=\"display: none\">*</td><td>17 g<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM  codeg = 'g')</span></td></tr></table></blockquote></div>"
+        },
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "876195",
+              "display": "Miralax 17 GM Powder for Oral Solution"
+            }
+          ],
+          "text": "Miralax 17g PO daily"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMASTI"
+        },
+        "dosageInstruction": [
+          {
+            "text": "17g PO daily",
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 1,
+                "periodUnit": "d"
+              }
+            },
+            "route": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "26643006",
+                  "display": "Oral route"
+                }
+              ]
+            },
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 17,
+                  "unit": "g",
+                  "system": "http://unitsofmeasure.org",
+                  "code": "g"
+                }
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.582Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "MedicationRequest/MaxineMayfield16Miralax"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/MedicationRequest/MaxineMayfield16Albuterol",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "MaxineMayfield16Albuterol",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"MedicationRequest_MaxineMayfield16Albuterol\"> </a><p class=\"res-header-id\"><b>Generated Narrative: MedicationRequest MaxineMayfield16Albuterol</b></p><a name=\"MaxineMayfield16Albuterol\"> </a><a name=\"hcMaxineMayfield16Albuterol\"> </a><p><b>status</b>: Active</p><p><b>intent</b>: Order</p><p><b>medication</b>: <span title=\"Codes:{http://www.nlm.nih.gov/research/umls/rxnorm 2123072}\">Albuterol 90 mcg/puff 2 puffs INH q4h PRN wheezing</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMASTI.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2026-04-17 --&gt; 2026-04-17</a></p><blockquote><p><b>dosageInstruction</b></p><p><b>text</b>: 2 puffs INH q4h PRN wheezing</p><p><b>timing</b>: Once per 4 hours</p><p><b>asNeeded</b>: true</p><p><b>route</b>: <span title=\"Codes:{http://snomed.info/sct 447694001}\">Respiratory tract route</span></p><h3>DoseAndRates</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Dose[x]</b></td></tr><tr><td style=\"display: none\">*</td><td>90 ug<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM  codeug = 'ug')</span></td></tr></table></blockquote></div>"
+        },
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "2123072",
+              "display": "albuterol 90 MCG/ACTUAT Metered Dose Inhaler, 200 Actuations, generic for ProAir"
+            }
+          ],
+          "text": "Albuterol 90 mcg/puff 2 puffs INH q4h PRN wheezing"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMASTI"
+        },
+        "dosageInstruction": [
+          {
+            "text": "2 puffs INH q4h PRN wheezing",
+            "timing": {
+              "repeat": {
+                "frequency": 1,
+                "period": 4,
+                "periodUnit": "h"
+              }
+            },
+            "asNeededBoolean": true,
+            "route": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "447694001",
+                  "display": "Respiratory tract route"
+                }
+              ]
+            },
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 90,
+                  "unit": "ug",
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ug"
+                }
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.582Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "MedicationRequest/MaxineMayfield16Albuterol"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/MedicationRequest/MaxineMayfield16Pulmicort",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "MaxineMayfield16Pulmicort",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"MedicationRequest_MaxineMayfield16Pulmicort\"> </a><p class=\"res-header-id\"><b>Generated Narrative: MedicationRequest MaxineMayfield16Pulmicort</b></p><a name=\"MaxineMayfield16Pulmicort\"> </a><a name=\"hcMaxineMayfield16Pulmicort\"> </a><p><b>status</b>: Active</p><p><b>intent</b>: Order</p><p><b>medication</b>: <span title=\"Codes:{http://www.nlm.nih.gov/research/umls/rxnorm 966524}\">Pulmicort Flexhaler 180mcg 2 puffs INH BID</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMASTI.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2026-04-17 --&gt; 2026-04-17</a></p><blockquote><p><b>dosageInstruction</b></p><p><b>text</b>: 2 puffs INH BID</p><p><b>timing</b>: 2 per 1 day</p><p><b>route</b>: <span title=\"Codes:{http://snomed.info/sct 447694001}\">Respiratory tract route</span></p><h3>DoseAndRates</h3><table class=\"grid\"><tr><td style=\"display: none\">-</td><td><b>Dose[x]</b></td></tr><tr><td style=\"display: none\">*</td><td>180 ug<span style=\"background: LightGoldenRodYellow\"> (Details: UCUM  codeug = 'ug')</span></td></tr></table></blockquote></div>"
+        },
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "966524",
+              "display": "Pulmicort Flexhaler 180 MCG/ACTUAT Dry Powder Inhaler, 120 ACTUAT"
+            }
+          ],
+          "text": "Pulmicort Flexhaler 180mcg 2 puffs INH BID"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMASTI"
+        },
+        "dosageInstruction": [
+          {
+            "text": "2 puffs INH BID",
+            "timing": {
+              "repeat": {
+                "frequency": 2,
+                "period": 1,
+                "periodUnit": "d"
+              }
+            },
+            "route": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "447694001",
+                  "display": "Respiratory tract route"
+                }
+              ]
+            },
+            "doseAndRate": [
+              {
+                "doseQuantity": {
+                  "value": 180,
+                  "unit": "ug",
+                  "system": "http://unitsofmeasure.org",
+                  "code": "ug"
+                }
+              }
+            ]
+          }
+        ],
+        "meta": {
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.582Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "MedicationRequest/MaxineMayfield16Pulmicort"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Observation/MaxineMayfield16LMP",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "MaxineMayfield16LMP",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Observation_MaxineMayfield16LMP\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Observation MaxineMayfield16LMP</b></p><a name=\"MaxineMayfield16LMP\"> </a><a name=\"hcMaxineMayfield16LMP\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity')</p></div><p><b>status</b>: Final</p><p><b>code</b>: <span title=\"Codes:{http://snomed.info/sct 21840007}\">Last Menstrual Period</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMASTI.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2026-04-17 --&gt; 2026-04-17</a></p><p><b>effective</b>: 2026-04-17</p><p><b>performer</b>: <a href=\"Practitioner-MaxineMayfieldDoctor.html\">Practitioner Jane Hibbert </a></p><p><b>value</b>: 2026-04-03</p></div>"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "21840007",
+              "display": "Date of last menstrual period (observable entity)"
+            }
+          ],
+          "text": "Last Menstrual Period"
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMASTI"
+        },
+        "effectiveDateTime": "2026-04-17",
+        "performer": [
+          {
+            "reference": "Practitioner/MaxineMayfieldDoctor"
+          }
+        ],
+        "valueDateTime": "2026-04-03",
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.582Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/MaxineMayfield16LMP"
+      }
+    },
+    {
+      "fullUrl": "http://example.org/fhir/Observation/MaxineMayfield16SexualOrientation",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "MaxineMayfield16SexualOrientation",
+        "language": "en",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a name=\"Observation_MaxineMayfield16SexualOrientation\"> </a><p class=\"res-header-id\"><b>Generated Narrative: Observation MaxineMayfield16SexualOrientation</b></p><a name=\"MaxineMayfield16SexualOrientation\"> </a><a name=\"hcMaxineMayfield16SexualOrientation\"> </a><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\"/><p style=\"margin-bottom: 0px\">Security Labels: restricted (Details: Confidentiality code R = 'restricted'), sexuality and reproductive health information sensitivity (Details: ActCode code SEX = 'sexuality and reproductive health information sensitivity')</p></div><p><b>status</b>: Final</p><p><b>code</b>: <span title=\"Codes:{http://loinc.org 76690-7}\">Sexual orientation</span></p><p><b>subject</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>encounter</b>: <a href=\"Encounter-MaxineMayfield16EncMASTI.html\">Encounter: status = finished; class = ambulatory (ActCode#AMB); type = ; period = 2026-04-17 --&gt; 2026-04-17</a></p><p><b>effective</b>: 2026-04-17</p><p><b>performer</b>: <a href=\"Patient-MaxineMayfield16.html\">Maxine Mayfield (official) Female, DoB: 2009-07-18</a></p><p><b>value</b>: <span title=\"Codes:{http://snomed.info/sct 42035005}\">Bisexual</span></p></div>"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "76690-7",
+              "display": "Sexual orientation"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/MaxineMayfield16"
+        },
+        "encounter": {
+          "reference": "Encounter/MaxineMayfield16EncMASTI"
+        },
+        "effectiveDateTime": "2026-04-17",
+        "performer": [
+          {
+            "reference": "Patient/MaxineMayfield16"
+          }
+        ],
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "42035005",
+              "display": "Bisexual (finding)"
+            }
+          ],
+          "text": "Bisexual"
+        },
+        "meta": {
+          "security": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality",
+              "code": "R",
+              "display": "restricted"
+            },
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "SEX",
+              "display": "SEX"
+            }
+          ],
+          "extension": [
+            {
+              "url": "http://hl7.org/fhir/StructureDefinition/lastSourceSync",
+              "valueDateTime": "2026-05-01T21:35:35.582Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "PUT",
+        "url": "Observation/MaxineMayfield16SexualOrientation"
+      }
+    }
+  ],
+  "extension": [
+    {
+      "url": "http://example.org/fhir/StructureDefinition/processing-summary",
+      "extension": [
+        {
+          "url": "analyzed",
+          "valueInteger": 30
+        },
+        {
+          "url": "labeled",
+          "valueInteger": 20
+        },
+        {
+          "url": "skipped",
+          "valueInteger": 0
+        }
+      ]
+    }
+  ]
+}

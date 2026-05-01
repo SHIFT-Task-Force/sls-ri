@@ -441,12 +441,27 @@ class FHIRSecurityLabelingService {
             let labeled = 0;
             let skipped = 0;
 
+            // Build a map of Encounter resources present in the bundle for encounter tag propagation
+            const encounterMap = {};
+            for (const entry of bundle.entry) {
+                const resource = entry.resource;
+                if (resource && resource.resourceType === 'Encounter' && resource.id) {
+                    encounterMap[`Encounter/${resource.id}`] = resource;
+                }
+            }
+
+            // Tracks sensitive topics to propagate to referenced Encounters
+            const encounterTopicsMap = {};
+
             for (const entry of bundle.entry) {
                 const resource = entry.resource;
                 
                 if (!resource || !this.SUPPORTED_RESOURCES.includes(resource.resourceType)) {
                     continue;
                 }
+
+                // Collect existing sensitivity labels for encounter propagation even when skipped
+                this.collectEncounterTopicsFromResource(resource, encounterMap, encounterTopicsMap, rules);
 
                 if (this.shouldSkipResource(resource, latestDate)) {
                     skipped++;
@@ -462,8 +477,27 @@ class FHIRSecurityLabelingService {
                     labeled++;
                 }
 
+                // Collect effective sensitivity labels (including newly applied labels)
+                this.collectEncounterTopicsFromResource(resource, encounterMap, encounterTopicsMap, rules);
+
                 this.addLastSourceSync(resource);
                 batchEntries.push(this.createBatchEntry(resource));
+            }
+
+            // Apply propagated topics to Encounters referenced by sensitive resources
+            for (const [encounterRef, topicsSet] of Object.entries(encounterTopicsMap)) {
+                const encounter = encounterMap[encounterRef];
+                if (encounter) {
+                    this.applySecurityLabels(encounter, Array.from(topicsSet));
+                    this.addLastSourceSync(encounter);
+                    // Add Encounter to batch if not already present (e.g., it was skipped earlier)
+                    const alreadyInBatch = batchEntries.some(
+                        e => e.resource && e.resource.resourceType === 'Encounter' && e.resource.id === encounter.id
+                    );
+                    if (!alreadyInBatch) {
+                        batchEntries.push(this.createBatchEntry(encounter));
+                    }
+                }
             }
 
             // Update statistics
@@ -510,6 +544,17 @@ class FHIRSecurityLabelingService {
             let labeled = 0;
             let skipped = 0;
 
+            // Tracks sensitive topics to propagate to referenced Encounters
+            const encounterTopicsMap = {};
+
+            // Build set of Encounter ids present in the bundle (for reference validation)
+            const bundleEncounterIds = new Set();
+            for (const entry of bundle.entry) {
+                if (entry.resource && entry.resource.resourceType === 'Encounter' && entry.resource.id) {
+                    bundleEncounterIds.add(`Encounter/${entry.resource.id}`);
+                }
+            }
+
             // Process all entries from the input bundle
             for (const entry of bundle.entry) {
                 const resource = entry.resource;
@@ -522,6 +567,9 @@ class FHIRSecurityLabelingService {
                     updatedEntries.push(newEntry);
                     continue;
                 }
+
+                // Collect existing sensitivity labels for encounter propagation even when skipped
+                this.collectEncounterTopicsFromResource(newEntry.resource, bundleEncounterIds, encounterTopicsMap, rules);
 
                 if (this.shouldSkipResource(resource, latestDate)) {
                     // Keep skipped resources as-is
@@ -539,8 +587,23 @@ class FHIRSecurityLabelingService {
                     labeled++;
                 }
 
+                // Collect effective sensitivity labels (including newly applied labels)
+                this.collectEncounterTopicsFromResource(newEntry.resource, bundleEncounterIds, encounterTopicsMap, rules);
+
                 this.addLastSourceSync(newEntry.resource);
                 updatedEntries.push(newEntry);
+            }
+
+            // Apply propagated topics to Encounter entries already in updatedEntries
+            for (const entry of updatedEntries) {
+                const resource = entry.resource;
+                if (resource && resource.resourceType === 'Encounter' && resource.id) {
+                    const ref = `Encounter/${resource.id}`;
+                    if (encounterTopicsMap[ref] && encounterTopicsMap[ref].size > 0) {
+                        this.applySecurityLabels(resource, Array.from(encounterTopicsMap[ref]));
+                        this.addLastSourceSync(resource);
+                    }
+                }
             }
 
             // Update statistics
@@ -607,6 +670,93 @@ class FHIRSecurityLabelingService {
             });
         }
         return rules;
+    }
+
+    /**
+     * Normalize an encounter reference to a relative "Encounter/<id>" key.
+     * Handles absolute URLs (e.g. http://example.org/fhir/Encounter/123) and
+     * relative references (e.g. Encounter/123).
+     */
+    normalizeEncounterRef(reference) {
+        if (!reference) return null;
+        const match = reference.match(/Encounter\/([^/]+)$/);
+        return match ? `Encounter/${match[1]}` : null;
+    }
+
+    /**
+     * Collect propagatable sensitivity topics from a resource into encounterTopicsMap.
+     * encounterIndex can be either an object map { Encounter/<id>: resource } or a Set of Encounter/<id>.
+     */
+    collectEncounterTopicsFromResource(resource, encounterIndex, encounterTopicsMap, rules) {
+        if (!resource || !resource.encounter || !resource.encounter.reference) {
+            return;
+        }
+
+        const encounterRef = this.normalizeEncounterRef(resource.encounter.reference);
+        if (!encounterRef) {
+            return;
+        }
+
+        let hasEncounter = false;
+        if (encounterIndex instanceof Set) {
+            hasEncounter = encounterIndex.has(encounterRef);
+        } else {
+            hasEncounter = !!encounterIndex[encounterRef];
+        }
+
+        if (!hasEncounter) {
+            return;
+        }
+
+        const topics = this.getPropagatableTopicsFromResource(resource, rules);
+        if (topics.length === 0) {
+            return;
+        }
+
+        if (!encounterTopicsMap[encounterRef]) {
+            encounterTopicsMap[encounterRef] = new Set();
+        }
+
+        for (const topic of topics) {
+            encounterTopicsMap[encounterRef].add(topic);
+        }
+    }
+
+    /**
+     * Convert resource.meta.security into topic strings expected by applySecurityLabels.
+     * Excludes confidentiality code R because applySecurityLabels adds it automatically.
+     */
+    getPropagatableTopicsFromResource(resource, rules) {
+        const topics = [];
+
+        if (resource && resource.meta && Array.isArray(resource.meta.security)) {
+            for (const sec of resource.meta.security) {
+                if (!sec || !sec.system || !sec.code) {
+                    continue;
+                }
+
+                const isRestrictedConfidentiality =
+                    sec.system === 'http://terminology.hl7.org/CodeSystem/v3-Confidentiality' && sec.code === 'R';
+
+                if (isRestrictedConfidentiality) {
+                    continue;
+                }
+
+                topics.push(JSON.stringify({
+                    system: sec.system,
+                    code: sec.code,
+                    display: sec.display || sec.code
+                }));
+            }
+        }
+
+        // If no existing security labels are present, analyze content directly.
+        // This makes encounter propagation independent from timestamp-based skip logic.
+        if (topics.length === 0 && rules) {
+            return this.analyzeResource(resource, rules);
+        }
+
+        return topics;
     }
 
     /**

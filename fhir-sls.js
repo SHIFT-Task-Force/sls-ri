@@ -397,6 +397,18 @@ class FHIRSecurityLabelingService {
             let labeled = 0;
             let skipped = 0;
 
+            // Build a map of Encounter resources present in the bundle for encounter tag propagation
+            const encounterMap = {};
+            for (const entry of bundle.entry) {
+                const resource = entry.resource;
+                if (resource && resource.resourceType === 'Encounter' && resource.id) {
+                    encounterMap[`Encounter/${resource.id}`] = resource;
+                }
+            }
+
+            // Tracks sensitive topics to propagate to referenced Encounters
+            const encounterTopicsMap = {};
+
             // Process each resource in the bundle
             for (const entry of bundle.entry) {
                 const resource = entry.resource;
@@ -405,6 +417,9 @@ class FHIRSecurityLabelingService {
                 if (!resource || !this.SUPPORTED_RESOURCES.includes(resource.resourceType)) {
                     continue;
                 }
+
+                // Collect existing sensitivity labels for encounter propagation even when skipped
+                this.collectEncounterTopicsFromResource(resource, encounterMap, encounterTopicsMap, rules);
 
                 // Check if resource needs re-analysis based on lastSourceSync
                 if (this.shouldSkipResource(resource, latestDate)) {
@@ -423,11 +438,30 @@ class FHIRSecurityLabelingService {
                     labeled++;
                 }
 
+                // Collect effective sensitivity labels (including newly applied labels)
+                this.collectEncounterTopicsFromResource(resource, encounterMap, encounterTopicsMap, rules);
+
                 // Add lastSourceSync extension
                 this.addLastSourceSync(resource);
 
                 // Create batch entry for update
                 batchEntries.push(this.createBatchEntry(resource));
+            }
+
+            // Apply propagated topics to Encounters referenced by sensitive resources
+            for (const [encounterRef, topicsSet] of Object.entries(encounterTopicsMap)) {
+                const encounter = encounterMap[encounterRef];
+                if (encounter) {
+                    this.applySecurityLabels(encounter, Array.from(topicsSet));
+                    this.addLastSourceSync(encounter);
+                    // Add Encounter to batch if not already present (e.g., it was skipped earlier)
+                    const alreadyInBatch = batchEntries.some(
+                        e => e.resource && e.resource.resourceType === 'Encounter' && e.resource.id === encounter.id
+                    );
+                    if (!alreadyInBatch) {
+                        batchEntries.push(this.createBatchEntry(encounter));
+                    }
+                }
             }
 
             // Update statistics
@@ -586,6 +620,82 @@ class FHIRSecurityLabelingService {
             url: this.LAST_SOURCE_SYNC_URL,
             valueDateTime: new Date().toISOString()
         });
+    }
+
+    /**
+     * Normalize an encounter reference to a relative "Encounter/<id>" key.
+     * Handles absolute URLs (e.g. http://example.org/fhir/Encounter/123) and
+     * relative references (e.g. Encounter/123).
+     */
+    normalizeEncounterRef(reference) {
+        if (!reference) return null;
+        const match = reference.match(/Encounter\/([^/]+)$/);
+        return match ? `Encounter/${match[1]}` : null;
+    }
+
+    /**
+     * Collect propagatable sensitivity topics from a resource into encounterTopicsMap.
+     * Uses resource.meta.security so previously tagged and newly tagged resources are both handled.
+     */
+    collectEncounterTopicsFromResource(resource, encounterMap, encounterTopicsMap, rules) {
+        if (!resource || !resource.encounter || !resource.encounter.reference) {
+            return;
+        }
+
+        const encounterRef = this.normalizeEncounterRef(resource.encounter.reference);
+        if (!encounterRef || !encounterMap[encounterRef]) {
+            return;
+        }
+
+        const topics = this.getPropagatableTopicsFromResource(resource, rules);
+        if (topics.length === 0) {
+            return;
+        }
+
+        if (!encounterTopicsMap[encounterRef]) {
+            encounterTopicsMap[encounterRef] = new Set();
+        }
+
+        for (const topic of topics) {
+            encounterTopicsMap[encounterRef].add(topic);
+        }
+    }
+
+    /**
+     * Convert resource.meta.security into topic strings expected by applySecurityLabels.
+     * Excludes confidentiality code R because applySecurityLabels adds it automatically.
+     */
+    getPropagatableTopicsFromResource(resource, rules) {
+        const topics = [];
+
+        if (resource && resource.meta && Array.isArray(resource.meta.security)) {
+            for (const sec of resource.meta.security) {
+                if (!sec || !sec.system || !sec.code) {
+                    continue;
+                }
+
+                const isRestrictedConfidentiality =
+                    sec.system === 'http://terminology.hl7.org/CodeSystem/v3-Confidentiality' && sec.code === 'R';
+
+                if (isRestrictedConfidentiality) {
+                    continue;
+                }
+
+                topics.push(JSON.stringify({
+                    system: sec.system,
+                    code: sec.code,
+                    display: sec.display || sec.code
+                }));
+            }
+        }
+
+        // If no existing security labels are present, analyze content directly.
+        // This makes encounter propagation independent from timestamp-based skip logic.
+        if (topics.length === 0 && rules) {
+            return this.analyzeResource(resource, rules);
+        }
+
+        return topics;
     }
 
     /**

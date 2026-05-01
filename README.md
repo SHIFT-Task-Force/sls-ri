@@ -63,6 +63,7 @@ This is a Web Service that has the following 2 APIs:
             - The confidentialityCode `R` (restricted)
             - Topic-specific security labels from matched sensitive categories
         - Add the lastSourceSync extension to the resource's meta element with the current dateTime.
+        - **Encounter tag propagation**: If the resource has an `encounter` element (e.g., `Observation.encounter`) referencing an Encounter resource that is present in the Bundle, the same sensitivity labels are also applied to that Encounter. The Encounter receives a deduplicated union of all sensitivity tags from every clinical resource that references it, and its lastSourceSync timestamp is updated. If the Encounter was previously skipped (already up-to-date), it is still included in the output Bundle with the newly propagated tags.
     - Build a new FHIR Batch Bundle, with update actions for each Resource that was analyzed.
     - The output Bundle.meta.security contains distinct (deduplicated) security labels from all resources in the bundle, providing a summary of all sensitive categories present.
     - Returning the Batch Bundle as the response.
@@ -345,6 +346,7 @@ sls-ri/
 - Matches against terminology codes (SNOMED CT, LOINC, ICD-10)
 - **Multiple topics per code**: Single code can trigger multiple security labels when matching ValueSets with multiple focus contexts
 - **Cross-ValueSet matching**: Code can match multiple ValueSets, applying all relevant security labels
+- **Encounter tag propagation**: Sensitivity labels are automatically propagated to the Encounter referenced by a clinical resource's `encounter` element when that Encounter is present in the same Bundle
 - Skips resources already analyzed (via `lastSourceSync` extension)
 
 ### 💾 Data Persistence
