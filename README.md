@@ -63,7 +63,14 @@ This is a Web Service that has the following 2 APIs:
             - The confidentialityCode `R` (restricted)
             - Topic-specific security labels from matched sensitive categories
         - Add the lastSourceSync extension to the resource's meta element with the current dateTime.
-        - **Encounter tag propagation**: If the resource has an `encounter` element (e.g., `Observation.encounter`) referencing an Encounter resource that is present in the Bundle, the same sensitivity labels are also applied to that Encounter. The Encounter receives a deduplicated union of all sensitivity tags from every clinical resource that references it, and its lastSourceSync timestamp is updated. If the Encounter was previously skipped (already up-to-date), it is still included in the output Bundle with the newly propagated tags.
+        - **Hierarchical tag propagation**: Sensitivity labels propagate upward through the care hierarchy in multiple directions:
+            - **Via `encounter` reference**: Any resource (Observation, Procedure, DiagnosticReport, MedicationRequest, ServiceRequest, CarePlan) with an `encounter` element propagates labels to that Encounter
+            - **From Encounter**: When an Encounter is sensitive, labels further propagate to:
+                - EpisodeOfCare resources referenced by the Encounter's `episodeOfCare` element
+                - Condition resources referenced by the Encounter's `diagnosis[].condition` element
+            - **Via clinical reason**: Resources with `reason[]` CodeableReference arrays that reference Condition (Observation, Procedure, MedicationRequest, ServiceRequest) propagate labels directly to those Conditions
+            - **Via care plan addressing**: CarePlan resources with `addresses[]` CodeableReference arrays that reference Condition propagate labels directly to those Conditions
+          All parent/target resources receive a deduplicated union of sensitivity tags, and their lastSourceSync timestamps are updated. If any parent resource was previously skipped (already up-to-date), it is still included in the output Bundle with the newly propagated tags.
     - Build a new FHIR Batch Bundle, with update actions for each Resource that was analyzed.
     - The output Bundle.meta.security contains distinct (deduplicated) security labels from all resources in the bundle, providing a summary of all sensitive categories present.
     - Returning the Batch Bundle as the response.
@@ -346,7 +353,12 @@ sls-ri/
 - Matches against terminology codes (SNOMED CT, LOINC, ICD-10)
 - **Multiple topics per code**: Single code can trigger multiple security labels when matching ValueSets with multiple focus contexts
 - **Cross-ValueSet matching**: Code can match multiple ValueSets, applying all relevant security labels
-- **Encounter tag propagation**: Sensitivity labels are automatically propagated to the Encounter referenced by a clinical resource's `encounter` element when that Encounter is present in the same Bundle
+- **Hierarchical tag propagation**: Sensitivity labels automatically propagate upward and across the care hierarchy through multiple pathways:
+  - Clinical resources → Encounter (via `encounter` element)
+  - Encounter → EpisodeOfCare and Condition (via `episodeOfCare` and `diagnosis[]` elements)
+  - Clinical resources → Condition (via `reason[]` CodeableReference)
+  - CarePlan → Condition (via `addresses[]` CodeableReference)
+  - See [REFERENCE-MAPPING.md](REFERENCE-MAPPING.md) for comprehensive documentation of all reference patterns
 - Skips resources already analyzed (via `lastSourceSync` extension)
 
 ### 💾 Data Persistence
@@ -355,11 +367,11 @@ sls-ri/
 - Status dashboard for monitoring loaded data
 
 ### 🎯 US Core Compliance
-Supports 16 clinical resource types from USCDI v4:
+Supports 17 clinical resource types from USCDI v4 (including tag propagation targets):
 - AllergyIntolerance, Condition, Procedure, Immunization
 - MedicationRequest, Medication, CarePlan, CareTeam, Goal
 - Observation, DiagnosticReport, DocumentReference
-- QuestionnaireResponse, Specimen, Encounter, ServiceRequest
+- QuestionnaireResponse, Specimen, Encounter, EpisodeOfCare, ServiceRequest
 
 ## Limitations
 

@@ -17,7 +17,7 @@ class FHIRSecurityLabelingService {
             'AllergyIntolerance', 'Condition', 'Procedure', 'Immunization',
             'MedicationRequest', 'Medication', 'CarePlan', 'CareTeam', 'Goal',
             'Observation', 'DiagnosticReport', 'DocumentReference',
-            'QuestionnaireResponse', 'Specimen', 'Encounter', 'ServiceRequest'
+            'QuestionnaireResponse', 'Specimen', 'Encounter', 'EpisodeOfCare', 'ServiceRequest'
         ];
         
         this.LAST_SOURCE_SYNC_URL = 'http://hl7.org/fhir/StructureDefinition/lastSourceSync';
@@ -441,17 +441,25 @@ class FHIRSecurityLabelingService {
             let labeled = 0;
             let skipped = 0;
 
-            // Build a map of Encounter resources present in the bundle for encounter tag propagation
-            const encounterMap = {};
+            // Build maps of target resources present in the bundle for tag propagation
+            const propagationIndex = {
+                Encounter: {},
+                EpisodeOfCare: {},
+                Condition: {}
+            };
             for (const entry of bundle.entry) {
                 const resource = entry.resource;
-                if (resource && resource.resourceType === 'Encounter' && resource.id) {
-                    encounterMap[`Encounter/${resource.id}`] = resource;
+                if (resource && resource.id && propagationIndex[resource.resourceType]) {
+                    propagationIndex[resource.resourceType][`${resource.resourceType}/${resource.id}`] = resource;
                 }
             }
 
-            // Tracks sensitive topics to propagate to referenced Encounters
-            const encounterTopicsMap = {};
+            // Tracks sensitive topics to propagate to referenced resources
+            const propagationTopicsMap = {
+                Encounter: {},
+                EpisodeOfCare: {},
+                Condition: {}
+            };
 
             for (const entry of bundle.entry) {
                 const resource = entry.resource;
@@ -460,8 +468,8 @@ class FHIRSecurityLabelingService {
                     continue;
                 }
 
-                // Collect existing sensitivity labels for encounter propagation even when skipped
-                this.collectEncounterTopicsFromResource(resource, encounterMap, encounterTopicsMap, rules);
+                // Collect existing sensitivity labels for propagation even when skipped
+                this.collectPropagatedTopicsFromResource(resource, propagationIndex, propagationTopicsMap, rules);
 
                 if (this.shouldSkipResource(resource, latestDate)) {
                     skipped++;
@@ -478,24 +486,28 @@ class FHIRSecurityLabelingService {
                 }
 
                 // Collect effective sensitivity labels (including newly applied labels)
-                this.collectEncounterTopicsFromResource(resource, encounterMap, encounterTopicsMap, rules);
+                this.collectPropagatedTopicsFromResource(resource, propagationIndex, propagationTopicsMap, rules);
 
                 this.addLastSourceSync(resource);
                 batchEntries.push(this.createBatchEntry(resource));
             }
 
-            // Apply propagated topics to Encounters referenced by sensitive resources
-            for (const [encounterRef, topicsSet] of Object.entries(encounterTopicsMap)) {
-                const encounter = encounterMap[encounterRef];
-                if (encounter) {
-                    this.applySecurityLabels(encounter, Array.from(topicsSet));
-                    this.addLastSourceSync(encounter);
-                    // Add Encounter to batch if not already present (e.g., it was skipped earlier)
+            // Apply propagated topics to referenced resources
+            for (const [resourceType, topicsByRef] of Object.entries(propagationTopicsMap)) {
+                for (const [resourceRef, topicsSet] of Object.entries(topicsByRef)) {
+                    const resource = propagationIndex[resourceType][resourceRef];
+                    if (!resource) {
+                        continue;
+                    }
+
+                    this.applySecurityLabels(resource, Array.from(topicsSet));
+                    this.addLastSourceSync(resource);
+                    // Add target resource to batch if not already present (e.g., it was skipped earlier)
                     const alreadyInBatch = batchEntries.some(
-                        e => e.resource && e.resource.resourceType === 'Encounter' && e.resource.id === encounter.id
+                        e => e.resource && e.resource.resourceType === resourceType && e.resource.id === resource.id
                     );
                     if (!alreadyInBatch) {
-                        batchEntries.push(this.createBatchEntry(encounter));
+                        batchEntries.push(this.createBatchEntry(resource));
                     }
                 }
             }
@@ -544,14 +556,22 @@ class FHIRSecurityLabelingService {
             let labeled = 0;
             let skipped = 0;
 
-            // Tracks sensitive topics to propagate to referenced Encounters
-            const encounterTopicsMap = {};
+            // Tracks sensitive topics to propagate to referenced resources
+            const propagationTopicsMap = {
+                Encounter: {},
+                EpisodeOfCare: {},
+                Condition: {}
+            };
 
-            // Build set of Encounter ids present in the bundle (for reference validation)
-            const bundleEncounterIds = new Set();
+            // Build maps of target resources present in the bundle for reference validation
+            const bundleResourceIndex = {
+                Encounter: {},
+                EpisodeOfCare: {},
+                Condition: {}
+            };
             for (const entry of bundle.entry) {
-                if (entry.resource && entry.resource.resourceType === 'Encounter' && entry.resource.id) {
-                    bundleEncounterIds.add(`Encounter/${entry.resource.id}`);
+                if (entry.resource && entry.resource.id && bundleResourceIndex[entry.resource.resourceType]) {
+                    bundleResourceIndex[entry.resource.resourceType][`${entry.resource.resourceType}/${entry.resource.id}`] = entry.resource;
                 }
             }
 
@@ -568,8 +588,8 @@ class FHIRSecurityLabelingService {
                     continue;
                 }
 
-                // Collect existing sensitivity labels for encounter propagation even when skipped
-                this.collectEncounterTopicsFromResource(newEntry.resource, bundleEncounterIds, encounterTopicsMap, rules);
+                // Collect existing sensitivity labels for propagation even when skipped
+                this.collectPropagatedTopicsFromResource(newEntry.resource, bundleResourceIndex, propagationTopicsMap, rules);
 
                 if (this.shouldSkipResource(resource, latestDate)) {
                     // Keep skipped resources as-is
@@ -588,21 +608,24 @@ class FHIRSecurityLabelingService {
                 }
 
                 // Collect effective sensitivity labels (including newly applied labels)
-                this.collectEncounterTopicsFromResource(newEntry.resource, bundleEncounterIds, encounterTopicsMap, rules);
+                this.collectPropagatedTopicsFromResource(newEntry.resource, bundleResourceIndex, propagationTopicsMap, rules);
 
                 this.addLastSourceSync(newEntry.resource);
                 updatedEntries.push(newEntry);
             }
 
-            // Apply propagated topics to Encounter entries already in updatedEntries
+            // Apply propagated topics to target entries already in updatedEntries
             for (const entry of updatedEntries) {
                 const resource = entry.resource;
-                if (resource && resource.resourceType === 'Encounter' && resource.id) {
-                    const ref = `Encounter/${resource.id}`;
-                    if (encounterTopicsMap[ref] && encounterTopicsMap[ref].size > 0) {
-                        this.applySecurityLabels(resource, Array.from(encounterTopicsMap[ref]));
-                        this.addLastSourceSync(resource);
-                    }
+                if (!resource || !resource.id || !propagationTopicsMap[resource.resourceType]) {
+                    continue;
+                }
+
+                const ref = `${resource.resourceType}/${resource.id}`;
+                const topicsSet = propagationTopicsMap[resource.resourceType][ref];
+                if (topicsSet && topicsSet.size > 0) {
+                    this.applySecurityLabels(resource, Array.from(topicsSet));
+                    this.addLastSourceSync(resource);
                 }
             }
 
@@ -673,53 +696,98 @@ class FHIRSecurityLabelingService {
     }
 
     /**
-     * Normalize an encounter reference to a relative "Encounter/<id>" key.
+     * Normalize a reference to a relative "ResourceType/<id>" key.
      * Handles absolute URLs (e.g. http://example.org/fhir/Encounter/123) and
      * relative references (e.g. Encounter/123).
      */
-    normalizeEncounterRef(reference) {
+    normalizeResourceRef(reference, resourceType) {
         if (!reference) return null;
-        const match = reference.match(/Encounter\/([^/]+)$/);
-        return match ? `Encounter/${match[1]}` : null;
+        const match = reference.match(new RegExp(`${resourceType}\/([^/]+)$`));
+        return match ? `${resourceType}/${match[1]}` : null;
     }
 
     /**
-     * Collect propagatable sensitivity topics from a resource into encounterTopicsMap.
-     * encounterIndex can be either an object map { Encounter/<id>: resource } or a Set of Encounter/<id>.
+     * Collect propagatable sensitivity topics from a resource into the propagationTopicsMap.
+     * propagationIndex maps each supported target type to a { ResourceType/<id>: resource } object.
      */
-    collectEncounterTopicsFromResource(resource, encounterIndex, encounterTopicsMap, rules) {
-        if (!resource || !resource.encounter || !resource.encounter.reference) {
-            return;
-        }
-
-        const encounterRef = this.normalizeEncounterRef(resource.encounter.reference);
-        if (!encounterRef) {
-            return;
-        }
-
-        let hasEncounter = false;
-        if (encounterIndex instanceof Set) {
-            hasEncounter = encounterIndex.has(encounterRef);
-        } else {
-            hasEncounter = !!encounterIndex[encounterRef];
-        }
-
-        if (!hasEncounter) {
-            return;
-        }
-
+    collectPropagatedTopicsFromResource(resource, propagationIndex, propagationTopicsMap, rules) {
         const topics = this.getPropagatableTopicsFromResource(resource, rules);
         if (topics.length === 0) {
             return;
         }
 
-        if (!encounterTopicsMap[encounterRef]) {
-            encounterTopicsMap[encounterRef] = new Set();
+        const targets = this.getPropagationTargetsFromResource(resource);
+        for (const target of targets) {
+            const targetRef = this.normalizeResourceRef(target.reference, target.resourceType);
+            if (!targetRef || !propagationIndex[target.resourceType] || !propagationIndex[target.resourceType][targetRef]) {
+                continue;
+            }
+
+            if (!propagationTopicsMap[target.resourceType][targetRef]) {
+                propagationTopicsMap[target.resourceType][targetRef] = new Set();
+            }
+
+            for (const topic of topics) {
+                propagationTopicsMap[target.resourceType][targetRef].add(topic);
+            }
+        }
+    }
+
+    /**
+     * Get target resources referenced by the source resource for sensitivity propagation.
+     */
+    getPropagationTargetsFromResource(resource) {
+        const targets = [];
+
+        if (resource && resource.encounter && resource.encounter.reference) {
+            targets.push({ resourceType: 'Encounter', reference: resource.encounter.reference });
         }
 
-        for (const topic of topics) {
-            encounterTopicsMap[encounterRef].add(topic);
+        if (resource && resource.resourceType === 'Encounter') {
+            if (Array.isArray(resource.episodeOfCare)) {
+                for (const episodeOfCare of resource.episodeOfCare) {
+                    if (episodeOfCare && episodeOfCare.reference) {
+                        targets.push({ resourceType: 'EpisodeOfCare', reference: episodeOfCare.reference });
+                    }
+                }
+            }
+
+            if (Array.isArray(resource.diagnosis)) {
+                for (const diagnosis of resource.diagnosis) {
+                    if (diagnosis && diagnosis.condition && diagnosis.condition.reference) {
+                        targets.push({ resourceType: 'Condition', reference: diagnosis.condition.reference });
+                    }
+                }
+            }
         }
+
+        // Handle CodeableReference fields that may reference Condition
+        // (e.g., Observation.reason, DiagnosticReport.reason, CarePlan.reason, etc.)
+        if (resource && Array.isArray(resource.reason)) {
+            for (const reasonItem of resource.reason) {
+                if (reasonItem && reasonItem.reference) {
+                    // Extract resource type from reference to determine if it's a Condition
+                    const refMatch = reasonItem.reference.match(/^([^/]+)\/([^/]+)$/);
+                    if (refMatch && refMatch[1] === 'Condition') {
+                        targets.push({ resourceType: 'Condition', reference: reasonItem.reference });
+                    }
+                }
+            }
+        }
+
+        // Handle CarePlan.addresses that reference Condition
+        if (resource && resource.resourceType === 'CarePlan' && Array.isArray(resource.addresses)) {
+            for (const addressItem of resource.addresses) {
+                if (addressItem && addressItem.reference) {
+                    const refMatch = addressItem.reference.match(/^([^/]+)\/([^/]+)$/);
+                    if (refMatch && refMatch[1] === 'Condition') {
+                        targets.push({ resourceType: 'Condition', reference: addressItem.reference });
+                    }
+                }
+            }
+        }
+
+        return targets;
     }
 
     /**
